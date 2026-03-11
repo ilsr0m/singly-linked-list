@@ -171,3 +171,155 @@ void* list_back(list_t *list)
 		return NULL;	
 	return list->tail;
 }
+
+void* list_remove(list_t *list, void* key, cmp_func_t cmp_func)
+{
+	// some stuff to prevent monkey coders from monkey code
+	assert(list != NULL);
+	assert(key != NULL);
+	assert(cmp_func != NULL);
+
+	if(!list || !key || !cmp_func) return NULL;
+
+	node_t* ptr = list->head;
+	node_t* prev; node_t *next;
+
+	while(ptr != NULL){
+		next = ptr->next;
+		// находим соответствие по компаратору
+		if(cmp_func(ptr->item, key) == 0)
+		{
+			if(ptr == list->head) // remove first
+				list->head = next;
+			else if(ptr == list->tail) // remove last
+			{
+				list->tail = prev;
+				prev->next = NULL;
+			}
+			else // remove in the middle
+				prev->next = next;
+
+			void* item = malloc(list->item_size);
+			memcpy(item, ptr->item, list->item_size);
+
+			free(ptr->item);
+			free(ptr);
+
+			list->size -= 1;
+			return item;
+		}
+
+		prev = ptr;
+		ptr = ptr->next;
+	}
+
+	return NULL;
+}
+
+int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func)
+{
+	// some stuff to prevent monkey coders from monkey code
+	assert(list != NULL);
+	assert(key != NULL);
+	assert(cmp_func != NULL);
+
+	if(!list || !key || !cmp_func) return -1;
+
+	int rem_count = 0;
+	node_t* ptr = list->head;
+	node_t* prev; node_t *next;
+
+	while(ptr != NULL)
+	{
+		next = ptr->next;
+		// находим соответствие по предикату
+		if(cmp_func(ptr->item, key) == 0)
+		{
+			if(ptr == list->head){ // remove first
+				list->head = next;
+			}
+			else if(ptr == list->tail) // remove last
+			{
+				list->tail = prev;
+				prev->next = NULL;
+			}
+			else{ // remove in the middle
+				prev->next = next;
+			}
+
+			free(ptr->item);
+			free(ptr);
+			list->size -= 1;
+			rem_count++;
+			ptr = next;
+		}
+		else{
+			prev = ptr;
+			ptr = ptr->next;
+		}
+	}
+	return rem_count;
+}
+
+void* list_pop_front(list_t *list)
+{
+	// some stuff to prevent monkey coders from monkey code
+	assert(list != NULL);
+	assert(list->size > 0);
+
+	if(!list) return NULL;
+	if(list->size == 0) return NULL;
+
+	node_t *ptr = list->head;
+	node_t *next = ptr->next;
+	list->head = next;
+
+	void* item = malloc(list->item_size);
+	memcpy(item, ptr->item, list->item_size);
+
+	free(ptr->item);
+	free(ptr);
+	list->size -= 1;
+	return item;
+}
+
+void* list_pop_back(list_t *list)
+{
+	// some stuff against monkey coders
+	assert(list != NULL);
+	assert(list->size > 0);
+
+	if(!list) return NULL;
+	if(list->size == 0) return NULL;
+
+	node_t *cur = list->head;
+	node_t *prev = NULL;
+
+	while(cur)
+	{
+		if(cur == list->tail)
+		{
+			list->tail = prev;
+
+			// cut node connection with tail
+			// prev is new tail node
+			if(prev)
+				prev->next = NULL;
+
+			void* item = malloc(list->item_size);
+			memcpy(item, cur->item, list->item_size);
+
+			free(cur->item);
+			free(cur);
+
+			list->size -= 1;
+
+			return item;
+		}
+
+		prev = cur;
+		cur = cur->next;
+	}
+
+	return NULL;
+}
