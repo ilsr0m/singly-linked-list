@@ -3,13 +3,17 @@
 list_t* list_create(const size_t item_size)
 {
 	assert(item_size > 0);
+	
 	if(item_size == 0) return NULL;
+	
+	list_t* list = (list_t*)malloc(sizeof(list_t));
+	if(!list) return NULL;
 
-	list_t* list = (list_t*)malloc(sizeof item_size);
-	memset(list, 0, sizeof item_size);
+	list->size = 0;
 	list->item_size = item_size;
 	list->head = NULL;
 	list->tail = NULL;
+
 	return list;
 }
 
