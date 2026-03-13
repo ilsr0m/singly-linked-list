@@ -161,7 +161,7 @@ void* list_front(list_t *list)
 
 	if(list == NULL || list->size == 0) 
 		return NULL;
-	return list->head;
+	return list->head->item;
 }
 
 void* list_back(list_t *list)
@@ -172,7 +172,7 @@ void* list_back(list_t *list)
 
 	if(list == NULL || list->size == 0) 
 		return NULL;	
-	return list->tail;
+	return list->tail->item;
 }
 
 void* list_remove(list_t *list, void* key, cmp_func_t cmp_func)
