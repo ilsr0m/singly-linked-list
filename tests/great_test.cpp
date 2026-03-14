@@ -26,6 +26,11 @@ test_point_t test_points[10] = {
     { 2.28, 27.88 }
 };
 
+// this comparator is needed as arg in list_remove and list_remove_all
+int remove_cmp(const void* _item, const void* _key){
+    return (*(int*)_item == *(int*)_key) ? 0 : -1;
+}
+
 TEST(ListTest, CreateTest){
     list_t *list = list_create(sizeof(int));
     
@@ -237,13 +242,6 @@ TEST(ListTest, BackTest){
     EXPECT_EQ(list, nullptr);
 }
 
-// this comparator is needed as arg in list_remove and list_remove_all
-int remove_cmp(const void* _item, const void* _key){
-    if(*(int*)_item == *(int*)_key)
-        return 0;
-    return -1;
-}
-
 TEST(ListTest, RemoveOnceTest){
     list_t* list = list_create(sizeof(int));
 
@@ -251,54 +249,57 @@ TEST(ListTest, RemoveOnceTest){
     for(int i = 0; i < 10; i++)
         list_append(list, &test_integers[i]);
     
+    // Test bundle
     void* removed_item;
     int test_ints_count;
+    node_t* test_iter;
+    int test_ints_1[9] = {2, -1, 5, 7, 0, 4, 5, 3, 1};  // for Test 1
+    int test_ints_2[8] = {2, -1, 5, 7, 0, 4, 5, 3};     // for Test 2
+    int test_ints_3[7] = {2, -1, 5, 7, 4, 5, 3};        // for Test 3
+    int test_ints_4[6] = {2, -1, 7, 4, 5, 3};           // for Test 4 and Test 5
 
     // Test 1 - Remove head item
-    int head_key = 9;
+    int head_key = 9; // remove 9 value
     removed_item = list_remove(list, &head_key, remove_cmp);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(*(int*)removed_item, head_key);
     EXPECT_EQ(list->size, 9);
     // check each item value
-    int test_ints_1[9] = {2, -1, 5, 7, 0, 4, 5, 3, 1};
-    node_t *test_iter_1 = list->head;
+    test_iter = list->head;
     test_ints_count = 0;
-    while(test_iter_1 != nullptr){
-        EXPECT_EQ(*(int*)test_iter_1->item, test_ints_1[test_ints_count]);
-        test_iter_1 = test_iter_1->next;
+    while(test_iter){
+        EXPECT_EQ(*(int*)test_iter->item, test_ints_1[test_ints_count]);
+        test_iter = test_iter->next;
         test_ints_count++;
     }
 
     // Test 2 - Remove tail item
-    int tail_key = 1;
+    int tail_key = 1; // remove 1 value
     removed_item = list_remove(list, &tail_key, remove_cmp);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(*(int*)removed_item, tail_key);
     EXPECT_EQ(list->size, 8);
     // check each item value
-    int test_ints_2[8] = {2, -1, 5, 7, 0, 4, 5, 3};
-    node_t *test_iter_2 = list->head;
+    test_iter = list->head;
     test_ints_count = 0;
-    while(test_iter_2 != nullptr){
-        EXPECT_EQ(*(int*)test_iter_2->item, test_ints_2[test_ints_count]);
-        test_iter_2 = test_iter_2->next;
+    while(test_iter){
+        EXPECT_EQ(*(int*)test_iter->item, test_ints_2[test_ints_count]);
+        test_iter = test_iter->next;
         test_ints_count++;
     }
 
     // Test 3 - Remove middle item
-    int middle_key = 0;
+    int middle_key = 0; // remove 0 value
     removed_item = list_remove(list, &middle_key, remove_cmp);
     EXPECT_NE(list, nullptr);
     EXPECT_EQ(*(int*)removed_item, middle_key);
     EXPECT_EQ(list->size, 7);
     // check each item value
-    int test_ints_3[7] = {2, -1, 5, 7, 4, 5, 3};
-    node_t *test_iter_3 = list->head;
+    test_iter = list->head;
     test_ints_count = 0;
-    while(test_iter_3 != nullptr){
-        EXPECT_EQ(*(int*)test_iter_3->item, test_ints_3[test_ints_count]);
-        test_iter_3 = test_iter_3->next;
+    while(test_iter){
+        EXPECT_EQ(*(int*)test_iter->item, test_ints_3[test_ints_count]);
+        test_iter = test_iter->next;
         test_ints_count++;
     }
 
@@ -309,12 +310,129 @@ TEST(ListTest, RemoveOnceTest){
     EXPECT_EQ(*(int*)removed_item, duplicate_key);
     EXPECT_EQ(list->size, 6);
     // check each item value
-    int test_ints_4[6] = {2, -1, 7, 4, 5, 3};
-    node_t *test_iter_4 = list->head;
+    test_iter = list->head;
     test_ints_count = 0;
-    while(test_iter_4 != nullptr){
-        EXPECT_EQ(*(int*)test_iter_4->item, test_ints_4[test_ints_count]);
-        test_iter_4 = test_iter_4->next;
+    while(test_iter){
+        EXPECT_EQ(*(int*)test_iter->item, test_ints_4[test_ints_count]);
+        test_iter = test_iter->next;
+        test_ints_count++;
+    }
+
+    // Test 5 - Try to remove value which the list does not have
+    int fake_key = 228;
+    removed_item = list_remove(list, &fake_key, remove_cmp);
+    EXPECT_NE(list, nullptr);
+    EXPECT_EQ(removed_item, nullptr);
+    EXPECT_EQ(list->size, 6);
+    // check each item value
+    test_iter = list->head;
+    test_ints_count = 0;
+    while(test_iter){
+        EXPECT_EQ(*(int*)test_iter->item, test_ints_4[test_ints_count]);
+        test_iter = test_iter->next;
+        test_ints_count++;
+    }
+
+    list_delete(&list);
+    EXPECT_EQ(list, nullptr);
+}
+
+TEST(ListTest, RemoveAllTest){
+    list_t* list = list_create(sizeof(int));
+
+    // fill list with some values
+    for(int i = 0; i < 10; i++)
+        list_append(list, &test_integers[i]);
+    
+    // Test bundle
+    int removed_items_count; // for return type
+    int test_ints_count;
+    node_t* test_iter;
+    int test_ints_1[9] = {2, -1, 5, 7, 0, 4, 5, 3, 1};  // for Test 1
+    int test_ints_2[8] = {2, -1, 5, 7, 0, 4, 5, 3};     // for Test 2
+    int test_ints_3[7] = {2, -1, 5, 7, 4, 5, 3};        // for Test 3
+    int test_ints_4[5] = {2, -1, 7, 4, 3};              // for Test 4 and Test 5
+
+    // Test 1 - Remove head item
+    int head_key = 9; // remove 9 value
+    removed_items_count = list_remove_all(list, &head_key, remove_cmp);
+    EXPECT_NE(list, nullptr);
+    EXPECT_EQ(removed_items_count, 1);
+    EXPECT_EQ(list->size, 9);
+    // check each item value
+    test_iter = list->head;
+    test_ints_count = 0;
+    while(test_iter){
+        EXPECT_EQ(*(int*)test_iter->item, test_ints_1[test_ints_count]);
+        test_iter = test_iter->next;
+        test_ints_count++;
+    }
+
+    // Test 2 - Remove tail item
+    int tail_key = 1; // remove 1 value
+    removed_items_count = list_remove_all(list, &tail_key, remove_cmp);
+    EXPECT_NE(list, nullptr);
+    EXPECT_EQ(removed_items_count, 1);
+    EXPECT_EQ(list->size, 8);
+    // check each item value
+    test_iter = list->head;
+    test_ints_count = 0;
+    while(test_iter){
+        EXPECT_EQ(*(int*)test_iter->item, test_ints_2[test_ints_count]);
+        test_iter = test_iter->next;
+        test_ints_count++;
+    }
+
+    // Test 3 - Remove middle item
+    int middle_key = 0; // remove 0 value
+    removed_items_count = list_remove_all(list, &middle_key, remove_cmp);
+    EXPECT_NE(list, nullptr);
+    EXPECT_EQ(removed_items_count, 1);
+    EXPECT_EQ(list->size, 7);
+    // check each item value
+    test_iter = list->head;
+    test_ints_count = 0;
+    while(test_iter){
+        EXPECT_EQ(*(int*)test_iter->item, test_ints_3[test_ints_count]);
+        test_iter = test_iter->next;
+        test_ints_count++;
+    }
+
+    // Test 4 - Remove value 5 (it must remove all item with such value)
+    int duplicate_key = 5; // remove all fives
+    // added the same value more
+    list_append(list, &duplicate_key);
+    list_append(list, &duplicate_key);
+    list_append(list, &duplicate_key);
+    list_prepend(list, &duplicate_key);
+    list_prepend(list, &duplicate_key);
+    list_insert(list, &duplicate_key, 4);
+    // start removing all fives
+    removed_items_count = list_remove_all(list, &duplicate_key, remove_cmp);
+    EXPECT_NE(list, nullptr);
+    EXPECT_EQ(removed_items_count, 8);
+    EXPECT_EQ(list->size, 5);
+    // check each item value
+    test_iter = list->head;
+    test_ints_count = 0;
+    while(test_iter){
+        EXPECT_EQ(*(int*)test_iter->item, test_ints_4[test_ints_count]);
+        test_iter = test_iter->next;
+        test_ints_count++;
+    }
+
+    // Test 5 - Try to remove value which the list does not have
+    int fake_key = 228;
+    removed_items_count = list_remove_all(list, &fake_key, remove_cmp);
+    EXPECT_NE(list, nullptr);
+    EXPECT_EQ(removed_items_count, 0);
+    EXPECT_EQ(list->size, 5);
+    // check each item value
+    test_iter = list->head;
+    test_ints_count = 0;
+    while(test_iter){
+        EXPECT_EQ(*(int*)test_iter->item, test_ints_4[test_ints_count]);
+        test_iter = test_iter->next;
         test_ints_count++;
     }
 
