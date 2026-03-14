@@ -3,16 +3,16 @@
 extern "C"{
     #include "list_c.h"
 
+    //test struct
     typedef struct TestPoint{
         double x;
         double y;
     }test_point_t;
 }
 
-// for append, prepend functions
+// test values
 int test_integers[10] = {9, 2, -1, 5, 7, 0, 4, 5, 3, 1};
 double test_doubles[10] = {-0.6, 1.7, 15.02, 2.3, 6.33, -19.29, 0.5, 5.11, 3.93, 24.0};
-
 test_point_t test_points[10] = {
     { 3.1, -6.22 },
     { 0.0, 9.7 },
@@ -31,13 +31,17 @@ int remove_cmp(const void* _item, const void* _key){
     return (*(int*)_item == *(int*)_key) ? 0 : -1;
 }
 
-TEST(ListTest, CreateTest){
-    list_t *list = list_create(sizeof(int));
-    
+// check when list is not null and empty
+void list_is_empty(list_t *list){
     EXPECT_NE(list, nullptr); // list is not null, coz it's already initialized
     EXPECT_EQ(list->size, 0); // no any items
     EXPECT_EQ(list->head, nullptr); // obviously null
     EXPECT_EQ(list->tail, nullptr); // obviously null
+}
+
+TEST(ListTest, CreateTest){
+    list_t *list = list_create(sizeof(int));
+    list_is_empty(list);
     EXPECT_EQ(list->item_size, sizeof(int)); // regards to the argument in list_create
 
     // simple check of function list_delete
@@ -47,6 +51,9 @@ TEST(ListTest, CreateTest){
 
 TEST(ListTest, AppendOnceTest){
     list_t *list = list_create(sizeof(int));
+    list_is_empty(list);
+    EXPECT_EQ(list->item_size, sizeof(int));
+
     int value = 5;
     list_append(list, &value);
 
@@ -67,6 +74,9 @@ TEST(ListTest, AppendOnceTest){
 
 TEST(ListTest, PrependOnceTest){
     list_t *list = list_create(sizeof(int));
+    list_is_empty(list);
+    EXPECT_EQ(list->item_size, sizeof(int));
+
     int value = 5;
     list_prepend(list, &value);
 
@@ -87,6 +97,8 @@ TEST(ListTest, PrependOnceTest){
 
 TEST(ListTest, AppendSeveralTest){
     list_t *list = list_create(sizeof(int));
+    list_is_empty(list);
+    EXPECT_EQ(list->item_size, sizeof(int));
 
     // fill list with some values
     for(int i = 0; i < 10; i++)
@@ -112,7 +124,9 @@ TEST(ListTest, AppendSeveralTest){
 
 TEST(ListTest, PrependSeveralTest){
     list_t *list = list_create(sizeof(int));
-    
+    list_is_empty(list);
+    EXPECT_EQ(list->item_size, sizeof(int));
+
     // fill list with some values
     for(int i = 0; i < 10; i++)
         list_prepend(list, &test_integers[i]);
@@ -137,6 +151,9 @@ TEST(ListTest, PrependSeveralTest){
 
 TEST(ListTest, ClearTest){
     list_t *list = list_create(sizeof(double));
+    list_is_empty(list);
+    EXPECT_EQ(list->item_size, sizeof(double));
+    
     // fill list with values to make it not empty
     for(int i = 0; i < 10; i++)
         list_append(list, &test_doubles[i]);
@@ -154,8 +171,10 @@ TEST(ListTest, ClearTest){
 
 TEST(ListTest, InsertTest){
     list_t *list = list_create(sizeof(test_point_t));
-    int result = 0;
+    list_is_empty(list);
+    EXPECT_EQ(list->item_size, sizeof(test_point_t));
 
+    int result = 0;
     // fill list with values to make it not empty
     for(int i = 0; i < 10; i++)
         list_append(list, &test_points[i]);
@@ -205,10 +224,11 @@ TEST(ListTest, InsertTest){
 }
 
 TEST(ListTest, FrontTest){
-    list_t *list;
+    list_t *list = list_create(sizeof(int));
+    list_is_empty(list);
+    EXPECT_EQ(list->item_size, sizeof(int));
+    
     void* result;
-
-    list = list_create(sizeof(int));
     int v1 = 3, v2 = 0;
 
     list_prepend(list, &v1);
@@ -224,10 +244,11 @@ TEST(ListTest, FrontTest){
 }
 
 TEST(ListTest, BackTest){
-    list_t *list;
-    void* result;
+    list_t *list = list_create(sizeof(int));
+    list_is_empty(list);
+    EXPECT_EQ(list->item_size, sizeof(int));
 
-    list = list_create(sizeof(int));
+    void* result;
     int v1 = 3, v2 = 0;
 
     list_append(list, &v1);
@@ -244,11 +265,9 @@ TEST(ListTest, BackTest){
 
 TEST(ListTest, RemoveOnceTest){
     list_t* list = list_create(sizeof(int));
+    list_is_empty(list);
+    EXPECT_EQ(list->item_size, sizeof(int));
 
-    // fill list with some values
-    for(int i = 0; i < 10; i++)
-        list_append(list, &test_integers[i]);
-    
     // Test bundle
     void* removed_item;
     int test_ints_count;
@@ -258,6 +277,18 @@ TEST(ListTest, RemoveOnceTest){
     int test_ints_3[7] = {2, -1, 5, 7, 4, 5, 3};        // for Test 3
     int test_ints_4[6] = {2, -1, 7, 4, 5, 3};           // for Test 4 and Test 5
 
+    // Test 0 - only one item in list
+    int once = 4;
+    list_append(list, &once);
+    removed_item = list_remove(list, &once, remove_cmp);
+    EXPECT_EQ(*(int*)removed_item, once);
+    list_is_empty(list);
+
+
+    // fill list with some values
+    for(int i = 0; i < 10; i++)
+        list_append(list, &test_integers[i]);
+    
     // Test 1 - Remove head item
     int head_key = 9; // remove 9 value
     removed_item = list_remove(list, &head_key, remove_cmp);
@@ -339,11 +370,9 @@ TEST(ListTest, RemoveOnceTest){
 
 TEST(ListTest, RemoveAllTest){
     list_t* list = list_create(sizeof(int));
+    list_is_empty(list);
+    EXPECT_EQ(list->item_size, sizeof(int));
 
-    // fill list with some values
-    for(int i = 0; i < 10; i++)
-        list_append(list, &test_integers[i]);
-    
     // Test bundle
     int removed_items_count; // for return type
     int test_ints_count;
@@ -353,6 +382,17 @@ TEST(ListTest, RemoveAllTest){
     int test_ints_3[7] = {2, -1, 5, 7, 4, 5, 3};        // for Test 3
     int test_ints_4[5] = {2, -1, 7, 4, 3};              // for Test 4 and Test 5
 
+    // Test 0 - only one item in list
+    int once = 4;
+    list_append(list, &once);
+    removed_items_count = list_remove_all(list, &once, remove_cmp);
+    EXPECT_EQ(removed_items_count, 1);
+    list_is_empty(list);
+
+    // fill list with some values
+    for(int i = 0; i < 10; i++)
+        list_append(list, &test_integers[i]);
+    
     // Test 1 - Remove head item
     int head_key = 9; // remove 9 value
     removed_items_count = list_remove_all(list, &head_key, remove_cmp);
