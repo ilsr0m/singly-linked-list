@@ -6,7 +6,7 @@ list_t* list_create(const size_t item_size){
 	list_t* list = (list_t*)malloc(sizeof(list_t));
 	if(!list) return NULL;
 
-	list->size = 0;
+	list->list_size = 0;
 	list->item_size = item_size;
 	list->head = NULL;
 	list->tail = NULL;
@@ -15,10 +15,10 @@ list_t* list_create(const size_t item_size){
 }
 
 void list_clear(list_t *list){
-	if(list == NULL) return;
+	if(!list) return;
 	// прописать очистку итемов
 	node_t *cur = list->head;
-	while(cur != NULL){
+	while(cur){
 		node_t* next = cur->next;
 		free(cur->item);
 		free(cur);
@@ -26,12 +26,12 @@ void list_clear(list_t *list){
 	}
 	list->head = NULL;
 	list->tail = NULL;
-	list->size = 0;
+	list->list_size = 0;
 }
 
 void list_delete(list_t **list){
-	if (list == NULL) return;
-	if(*list == NULL) return;
+	if (!list || !(*list)) return;
+	// if(*list == NULL) return;
 
 	// clean items
 	node_t *cur = (*list)->head;
@@ -49,73 +49,94 @@ void list_delete(list_t **list){
 
 int list_append(list_t *list, const void *item){
 	if(!list || !item) return -1;
-	// new node pointer
-	node_t* new_ptr = (node_t*)malloc(sizeof(node_t));
-	if(new_ptr == NULL) return -1;
-	new_ptr->item = malloc(list->item_size);
-	if(new_ptr->item == NULL) return -1;
-	memcpy(new_ptr->item, item, list->item_size);
-	new_ptr->next = NULL;
 
-	// if first item placed
-	if(list->head == NULL){
-		list->head = new_ptr;
-	    list->tail = new_ptr;
+	// try to allocate memory for new node
+	node_t* new_node = (node_t*)malloc(sizeof(node_t));
+	if(!new_node) return -1;
+
+	// try to allocate memory for new item
+	new_node->item = malloc(list->item_size);
+	if(!new_node->item){
+		free(new_node);
+		return -1;
+	} 
+	memcpy(new_node->item, item, list->item_size);
+	new_node->next = NULL;
+
+	// if list is empty
+	if(!list->head){
+		list->head = new_node;
+	    list->tail = new_node;
 	}
-	else{ // if more than one
-		list->tail->next = new_ptr;
-		list->tail = new_ptr;
+	else{ // list size is greater than 0
+		list->tail->next = new_node;
+		list->tail = new_node;
 	}
-	list->size += 1;
+	list->list_size += 1;
 	return 0;
 }
 
 int list_prepend(list_t *list, const void *item){
 	if(!list || !item) return -1;
 
-	node_t* new_ptr = (node_t*)malloc(sizeof(node_t));
-	if(new_ptr == NULL) return -1;
-	new_ptr->item = malloc(list->item_size);
-	if(new_ptr->item == NULL) return -1;
-	memcpy(new_ptr->item, item, list->item_size);
-	new_ptr->next = NULL;
+	// try to allocate memory for new node
+	node_t* new_node = (node_t*)malloc(sizeof(node_t));
+	if(!new_node) return -1;
 
-	// создаем список с нуля
-	if(list->head == NULL){
-		list->head = new_ptr;
-	    list->tail = new_ptr;
+	// try to allocate memory for new item
+	new_node->item = malloc(list->item_size);
+	if(!new_node->item){
+		free(new_node);
+		return -1;
 	}
-	else{
+	memcpy(new_node->item, item, list->item_size);
+	new_node->next = NULL;
+
+	// if list is empty
+	if(!list->head){
+		list->head = new_node;
+	    list->tail = new_node;
+	}
+	else{ // list size is greater than 0
 		node_t *tmp = list->head;
-		list->head = new_ptr;
+		list->head = new_node;
 		list->head->next = tmp;
 	}
 
-	list->size += 1;
+	list->list_size += 1;
 	return 0;
 }
 
 int list_insert(list_t *list, const void *item, const size_t pos){
 	if(!list || !item) return -1;
-	if(pos > list->size) return -1;
+	if(pos > list->list_size) return -1;
 
 	size_t count = 0;
 	node_t *cur = list->head;
 	node_t *prev = NULL;
 
-	while(cur != NULL){
+	while(cur){
 		if(count == pos){
 			if(cur == list->head){
 				list_prepend(list, item);
 				return 0;
 			}
 			else{
-				node_t* new_ptr = (node_t*)malloc(sizeof(node_t));
-				new_ptr->item = malloc( list->item_size);
-				memcpy(new_ptr->item, item, list->item_size);
-				prev->next = new_ptr;
-				new_ptr->next = cur;
-				list->size += 1;
+				// try to allocate memory for new node
+				node_t* new_node = (node_t*)malloc(sizeof(node_t));
+				if(!new_node) return -1;
+
+				// try to allocate memory for new item
+				new_node->item = malloc( list->item_size);
+				if(!new_node->item) {
+					free(new_node);
+					return -1;
+				}
+				memcpy(new_node->item, item, list->item_size);
+				// node swapping
+				prev->next = new_node;
+				new_node->next = cur;
+				list->list_size += 1;
 				return 0;
 			}
 		}
@@ -124,7 +145,7 @@ int list_insert(list_t *list, const void *item, const size_t pos){
 		cur = cur->next;
 	}
 
-	if(pos == list->size){
+	if(pos == list->list_size){
 		list_append(list, item);
 		return 0;
 	}
@@ -132,11 +153,11 @@ int list_insert(list_t *list, const void *item, const size_t pos){
 }
 
 void* list_front(list_t *list){
-	return (list == NULL || list->size == 0) ? NULL : list->head->item;
+	return (!list || list->list_size == 0) ? NULL : list->head->item;
 }
 
 void* list_back(list_t *list){
-	return (list == NULL || list->size == 0) ? NULL : list->tail->item;
+	return (!list || list->list_size == 0) ? NULL : list->tail->item;
 }
 
 void* list_remove(list_t *list, void* key, cmp_func_t cmp_func){
@@ -145,7 +166,7 @@ void* list_remove(list_t *list, void* key, cmp_func_t cmp_func){
 	node_t* ptr = list->head;
 	node_t* prev; node_t *next;
 
-	while(ptr != NULL){
+	while(ptr){
 		next = ptr->next;
 		// check by comaprator
 		if(cmp_func(ptr->item, key) == 0){
@@ -166,7 +187,7 @@ void* list_remove(list_t *list, void* key, cmp_func_t cmp_func){
 			free(ptr->item);
 			free(ptr);
 
-			list->size -= 1;
+			list->list_size -= 1;
 			return item;
 		}
 
@@ -184,7 +205,7 @@ int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func){
 	node_t* ptr = list->head;
 	node_t* prev; node_t *next;
 
-	while(ptr != NULL){
+	while(ptr){
 		next = ptr->next;
 		// check by comaprator
 		if(cmp_func(ptr->item, key) == 0)
@@ -202,7 +223,7 @@ int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func){
 			
 			free(ptr->item); 
 			free(ptr);
-			list->size -= 1;
+			list->list_size -= 1;
 			rem_count++;
 			ptr = next;
 		}
@@ -216,7 +237,7 @@ int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func){
 
 void* list_pop_front(list_t *list){
 	if(!list) return NULL;
-	if(list->size == 0) return NULL;
+	if(list->list_size == 0) return NULL;
 
 	node_t *ptr = list->head;
 
@@ -232,13 +253,13 @@ void* list_pop_front(list_t *list){
 
 	free(ptr->item);
 	free(ptr);
-	list->size -= 1;
+	list->list_size -= 1;
 	return item;
 }
 
 void* list_pop_back(list_t *list){
 	if(!list) return NULL;
-	if(list->size == 0) return NULL;
+	if(list->list_size == 0) return NULL;
 
 	node_t *cur = list->head;
 	node_t *prev = NULL;
@@ -261,7 +282,7 @@ void* list_pop_back(list_t *list){
 			free(cur->item);
 			free(cur);
 
-			list->size -= 1;
+			list->list_size -= 1;
 			return item;
 		}
 
