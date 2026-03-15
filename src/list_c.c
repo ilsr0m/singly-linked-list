@@ -291,3 +291,18 @@ void* list_pop_back(list_t *list){
 	}
 	return NULL;
 }
+
+void* list_at(const list_t *list, const size_t index) {
+	if(!list) return NULL;
+	if(index >= list->list_size) return NULL;
+
+	node_t* cur = list->head;
+	int count = 0;
+	while(cur != NULL) {
+		if(index == count)
+			return cur->item;
+		cur = cur->next;
+		count++;
+	}
+	return NULL;
+}

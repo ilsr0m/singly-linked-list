@@ -126,4 +126,12 @@ void* list_pop_front(list_t *list);
  */
 void* list_pop_back(list_t *list); 
 
+/**
+ * @brief Получение указателя на элемент списка по заданому индексу
+ * @param[in] list Указатель на список
+ * @param[in] index Индекс узла
+ * @return Указатель на узел, соответствующий размещению в списке по аргументу index.
+ */
+void* list_at(const list_t *list, const size_t index);
+
 #endif

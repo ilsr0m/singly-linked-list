@@ -496,6 +496,37 @@ TEST_F(ListTest, PopBackTest) {
     Clear();
 }
 
+TEST_F(ListTest, AtTest) {
+    void* item;
+
+    // empty list
+    item = list_at(list, 0);
+    EXPECT_EQ(item, nullptr);
+    IsEmpty();
+
+    // prepare values
+    FillList(list_append);
+
+    // try to get value by valid index
+    // scan all values
+    for(int i = 0; i < 10; i++) {
+        item = list_at(list, i);
+        EXPECT_NE(item, nullptr);
+        EXPECT_EQ(*(int*)item, testValues[i]);
+        IsNotEmpty();
+    }
+
+    // try to get value by invalid index
+    // scan 10 invalid indexes
+    for(int i = 10; i < 20; i++){
+        item = list_at(list, i);
+        EXPECT_EQ(item, nullptr);
+        IsNotEmpty();
+    }
+
+    Clear();
+}
+
 int main(int argc, char **argv){
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
