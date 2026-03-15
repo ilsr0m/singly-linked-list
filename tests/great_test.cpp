@@ -72,6 +72,10 @@ protected:
     static int Comparator(const void* _item, const void* _key) {
         return (*(int*)_item == *(int*)_key) ? 0 : -1;
     }
+
+    static int Predicate(const void* _item, void* _context){
+        return (*(int*)_item > *(int*)_context) ? 0 : 1;
+    }
 };
 
 // function: list_create
@@ -594,6 +598,7 @@ TEST_F(ListTest, CopyTest){
     Clear();
 }
 
+// function: list_contains
 TEST_F(ListTest, ContainsTest){
     int result;
     int v1 = 0, v2 = 5, v3 = 170;
@@ -656,6 +661,72 @@ TEST_F(ListTest, ContainsTest){
 
     Clear();
 }   
+
+// function: list_filter
+TEST_F(ListTest, FilterTest){
+    list_t *filtered;
+    int v1 = 5, v2 = 170, v3 = 0, v4 = 3;
+    int filtered_values[5] = {9, 5, 7, 4, 5};
+
+    // if any argument is null: -1
+    filtered = list_filter(nullptr, &v1, Predicate);
+    EXPECT_EQ(filtered, nullptr);
+    filtered = list_filter(list, nullptr, Predicate);
+    EXPECT_EQ(filtered, nullptr);
+    filtered = list_filter(list, &v1, nullptr);
+    EXPECT_EQ(filtered, nullptr);
+    filtered = list_filter(nullptr, nullptr, Predicate);
+    EXPECT_EQ(filtered, nullptr);
+    filtered = list_filter(nullptr, &v1, nullptr);
+    EXPECT_EQ(filtered, nullptr);
+    filtered = list_filter(list, nullptr, nullptr);
+    EXPECT_EQ(filtered, nullptr);
+    filtered = list_filter(nullptr, nullptr, nullptr);
+    EXPECT_EQ(filtered, nullptr);
+    
+    // if list is empty
+    IsEmpty();
+    filtered = list_filter(list, &v1, Predicate);
+    ListTest::IsEmpty(filtered);
+    list_delete(&filtered);
+    EXPECT_EQ(filtered, nullptr);
+
+    // if list has one item
+    // invalid context
+    list_append(list, &v1);
+    filtered = list_filter(list, &v2, Predicate); 
+    ListTest::IsEmpty(filtered);
+    list_delete(&filtered);
+    EXPECT_EQ(filtered, nullptr);
+
+    // valid context
+    filtered = list_filter(list, &v3, Predicate); 
+    ListTest::IsNotEmpty(filtered);
+    EXPECT_EQ(filtered->list_size, 1);
+    EXPECT_NE(filtered->head, nullptr);
+    EXPECT_EQ(filtered->head, filtered->tail);
+    list_delete(&filtered);
+    EXPECT_EQ(filtered, nullptr);    
+    Clear();
+
+    // it has multiple items
+    FillList(list_append);
+    // invalid
+    filtered = list_filter(list, &v2, Predicate); 
+    ListTest::IsEmpty(filtered);
+    list_delete(&filtered);
+    EXPECT_EQ(filtered, nullptr);
+    // valid: gt 3
+    filtered = list_filter(list, &v4, Predicate); 
+    ListTest::IsNotEmpty(filtered);
+    EXPECT_EQ(filtered->list_size, 5);
+    for(int i = 0; i < 5; i++)
+        EXPECT_EQ(*(int*)list_at(filtered, i), filtered_values[i]); // using list_at function checked before
+    list_delete(&filtered);
+    EXPECT_EQ(filtered, nullptr);
+
+    Clear();
+}
 
 int main(int argc, char **argv){
     ::testing::InitGoogleTest(&argc, argv);

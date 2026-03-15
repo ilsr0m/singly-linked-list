@@ -160,8 +160,8 @@ void* list_back(list_t *list){
 	return (!list || list->list_size == 0) ? NULL : list->tail->item;
 }
 
-void* list_remove(list_t *list, void* key, cmp_func_t cmp_func){
-	if(!list || !key || !cmp_func) return NULL;
+void* list_remove(list_t *list, void* key, cmp_func_t comparator){
+	if(!list || !key || !comparator) return NULL;
 
 	node_t* ptr = list->head;
 	node_t* prev; node_t *next;
@@ -169,7 +169,7 @@ void* list_remove(list_t *list, void* key, cmp_func_t cmp_func){
 	while(ptr){
 		next = ptr->next;
 		// check by comaprator
-		if(cmp_func(ptr->item, key) == 0){
+		if(comparator(ptr->item, key) == 0){
 			if(ptr == list->head){ // remove first
 				if(list->tail == list->head) // if only one item in list
 					list->head = list->tail = NULL;	
@@ -198,8 +198,8 @@ void* list_remove(list_t *list, void* key, cmp_func_t cmp_func){
 	return NULL;
 }
 
-int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func){
-	if(!list || !key || !cmp_func) return -1;
+int list_remove_all(list_t *list, void* key, cmp_func_t comparator){
+	if(!list || !key || !comparator) return -1;
 
 	int rem_count = 0;
 	node_t* ptr = list->head;
@@ -208,7 +208,7 @@ int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func){
 	while(ptr){
 		next = ptr->next;
 		// check by comaprator
-		if(cmp_func(ptr->item, key) == 0)
+		if(comparator(ptr->item, key) == 0)
 		{
 			if(ptr == list->head){ // remove first
 				if(list->head == list->tail) // if only one item in list
@@ -322,19 +322,37 @@ list_t *list_copy(const list_t *list){
 	return copy;
 }
 
-int list_contains(const list_t *list, const void* item, cmp_func_t cmp)
+int list_contains(const list_t *list, const void* key, cmp_func_t comparator)
 {
-	if(!list || !item || !cmp) return -1;
+	if(!list || !key || !comparator) return -1;
 	if(!list->item_size) return -1;
 
 	size_t count = 0;
 	if(list->list_size) {
 		node_t *cur = list->head;
 		while(cur != NULL) {
-			if(cmp(cur->item, item) == 0)
+			if(comparator(cur->item, key) == 0)
 			count++;
 			cur = cur->next;
 		}
 	}
 	return count;
+}
+
+list_t* list_filter(const list_t *list, void* context, predicate_fn predicate)
+{
+	if(list == NULL || predicate == NULL || context == NULL) return NULL;
+	if(!list->item_size) return NULL;
+
+	list_t *destination = list_create(list->item_size);
+	if(!destination) return NULL;
+	if(list->list_size) {
+		node_t *current_node = list->head;
+		while(current_node) {
+			if(predicate(current_node->item, context) == 0)
+				list_append(destination, current_node->item);
+			current_node = current_node->next;
+	 	}
+	}
+	return destination;
 }

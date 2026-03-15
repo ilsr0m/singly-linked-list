@@ -37,7 +37,7 @@ typedef  int (*cmp_func_t)(const void *_item, const void *_key);
  * @param[in] _ctx Указатель на контекст
  * @return Результат сравнения с контекстом: 0 - прошел, остальное - не прошел
  */
-typedef int (*predicate_fn)(const void * _item, void * _ctx);
+typedef int (*predicate_fn)(const void* _item, void* _context);
 
 /**
  * @brief Функция создания односвязного линейного списка
@@ -100,19 +100,19 @@ void* list_back(list_t *list);
  * @brief Функция удаления первого соответстующего элементов односвязного линейного списка
  * @param[out] list Указатель на список
  * @param[in] key Ключ сравнения, передаваемый в компаратор в качестве аргумента
- * @param[in] cmp_func Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
+ * @param[in] comparator Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
  * @return Количество удаленных элементов
  */
-void* list_remove(list_t *list, void* key, cmp_func_t cmp_func); 
+void* list_remove(list_t *list, void* key, cmp_func_t comparator); 
 
 /**
  * @brief Функция удаления всех соответстующих элементов односвязного линейного списка
  * @param[out] list Указатель на список
  * @param[in] key Ключ сравнения, передаваемый в компаратор в качестве аргумента
- * @param[in] cmp_func Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
+ * @param[in] comparator Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
  * @return Количество удаленных элементов
  */
-int list_remove_all(list_t *list, void* key, cmp_func_t cmp_func); 
+int list_remove_all(list_t *list, void* key, cmp_func_t comparator); 
 
 /**
  * @brief Функция удаления первого узла списка
@@ -136,7 +136,7 @@ void* list_at(const list_t *list, const size_t index);
 
 /**
  * @brief Формирование копии списка, указатель которого передается в аргумент
- * @param[in] first Указатель на список
+ * @param[in] list Указатель на список
  * @return Указатель на копию списка
  */
 list_t *list_copy(const list_t *list);
@@ -144,10 +144,20 @@ list_t *list_copy(const list_t *list);
 /**
  * @brief Проверка наличия соответствующего элемента в списке
  * @param[in] list Указатель на список
- * @param[in] index Указатель на элемент
+ * @param[in] key Указатель на ключ
+ * @param[in] comparator Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
  * @return Результат поиска: 0 - найден, 1 - не найден.
  * Если list - NULL или item == 0, то функция вернет -1
  */
-int list_contains(const list_t *list, const void* item, cmp_func_t cmp);
+int list_contains(const list_t* list, const void* key, cmp_func_t comparator);
+
+/**
+ * @brief Формирование нового односвязного линейного списка на основе старого с фильрацией данных по предикату
+ * @param[in] list Указатель на список
+ * @param[in] predicate Предикат, по которому сравниваются данные каждого узла. Если резльтат - 0, то данные удовлетворяют условиям
+ * @param[in] context Указатель на контекст предиката. Т. е. с чем сранвивать данные узла. Передается потом в качестве аргумента в предикат
+ * @return Указатель на новый односвязный линейный список. Если list - NULL, то функция вернет NULL
+ */
+list_t* list_filter(const list_t* list, void* context, predicate_fn predicate);
 
 #endif
