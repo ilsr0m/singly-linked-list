@@ -354,8 +354,18 @@ int list_trim_front(list_t* list, const size_t n) {
 	if(n > list->list_size) return -1;
 	if(!n) return 0;
 	int i;
-	for(i = 0; i < n; i++)
-		list_pop_front(list);
+	for(i = 0; i < n; i++){
+		node_t *current_node = list->head;
+		if(list->head == list->tail) // if only one item
+			list->head = list->tail = NULL;
+		else {
+			node_t *next_node = list->head->next;
+			list->head = next_node;
+		}
+		free(current_node->item);
+		free(current_node);
+		list->list_size -= 1;
+	}
 	return i;
 }
 
