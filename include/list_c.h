@@ -7,240 +7,460 @@
 #include <string.h>
 #include <time.h>
 
-typedef struct Node node_t;
-typedef struct OWList list_t;
+typedef struct SingleNode snode_t;
+typedef struct SingleList slist_t;
 
 /**
- * @brief Функция-компаратор, предаваемая в качестве аргумента
- * @param[in] _item Pointer to the item
- * @param[in] _key Pointer to the key
- * @return 0 - success
- * @return 1 - fail
- */
-typedef  int (*comparator_fn)(const void *_item, const void *_key);
+* @brief Comparator function.
+*
+* Compares element with key.
+*
+* @param[in] item Pointer to element.
+* @param[in] key Pointer to key value.
+*
+* @return Positive value if item < key.
+* @return Zero value if both are equal.
+* @return Negative value if item < key.
+*/
+typedef  int (*comparator_fn)(const void *item, const void *key);
 
 /**
- * @brief Функция-предикат, предаваемая в качестве аргумента
- * @param[in] _item Pointer to the item
- * @param[in] _context Pointer to the context
- * @return Результат сравнения с контекстом:
- * @return 0 - success
- * @return 1 - fail
- */
-typedef int (*predicate_fn)(const void* _item, void* _context);
-
-/*---------------- C-like getters ----------------*/
-/**
- * @brief Returns size of one-way linked list
- * @param[in] lst Pointer to the list
- * @return List's size
- */
-size_t list_size(const list_t *lst);
+* @brief Predicate function with context.
+*
+* Evaulates condition for element using user-defined context.
+*
+* @param[in] item Pointer to element.
+* @param[in] context Pointer to user-defined context.
+*
+* @return Non-zero if condition is true.
+* @return Zero otherwise.
+*/
+typedef int (*predicate_fn)(const void* item, void* context);
 
 /**
- * @brief Returns item size of one-way linked list
- * @param[in] lst Pointer to the list
- * @return Item's size
- */
-size_t list_item_size(const list_t *lst);
-
-node_t* list_head(const list_t *lst);
-node_t* list_tail(const list_t *lst);
-
-node_t *node_next(const node_t *nod);
-void* node_data(const node_t *nod);
-
-/**
- * @brief Функция возвращает первый элемент списка
- * @param[out] lst Pointer to the list
- * @return Указатель на первый элемент списка
- */
-void* list_front_item(const list_t *lst);
+* @brief Creates list.
+*
+* Allocates and initializes new singly-linked list container.
+*
+* @param[in] item_size Size of single stored element in bytes.
+*
+* @return Pointer to created list on success.
+* @return NULL on failure.
+*/
+slist_t* slist_create(const size_t item_size);
 
 /**
- * @brief Функция возвращает последний элемент списка
- * @param[out] lst Pointer to the list
- * @return Указатель на последний элемент списка
- */
-void* list_back_item(const list_t *lst);
+* @brief Removes all elements from list.
+*
+* Frees all nodes and stored items.
+* List structure remains valid and can be reused.
+*
+* @param[in,out] lst Pointer to list.
+*/
+void slist_clear(slist_t *lst);
 
 /**
- * @brief Получение указателя на элемент списка по заданому индексу
- * @param[in] lst Pointer to the list
- * @param[in] index Индекс узла
- * @return Указатель на узел, соответствующий размещению в списке по аргументу index.
- */
-void* list_at(const list_t *lst, const size_t index);
-/*------------------------------------------------*/
+* @brief Destroys list and resets pointer.
+*
+* Frees all nodes, stored items and list structure,
+* then sets pointer to NULL.
+*
+* @param[in,out] lst Pointer to list pointer.
+*/
+void slist_delete(slist_t **lst);
 
 /**
- * @brief Функция создания односвязного линейного списка
- * @param[in] item_size Размер выделенной памяти для каждого элемента
- * @return Pointer to the list
+ * @brief Checks if list is empty
+ * 
+ * @param [in] lst Pointer to list.
+ * 
+ * @return 1 if list is empty.
+ * @return 0 otherwise.
+ * @return -1 on error.
  */
-list_t* list_create(const size_t item_size);
+int slist_empty(const slist_t *lst);
 
 /**
- * @brief Функция очистки односвязного списка
- * @param[in] lst Pointer to the list
- */
-void list_clear(list_t *lst);
+* @brief Appends element to end of list.
+*
+* @param[in,out] lst Pointer to list.
+* @param[in] item Pointer to element to append.
+*
+* @return 0 on success. 
+* @return -1 on failure.
+*/
+int slist_append(slist_t *lst, const void *item);
 
 /**
- * @brief Функция удаления всего односвязного линейного списка
- * @param[out] lst Pointer to the list
- */
-void list_delete(list_t **lst);
-
-int list_empty(const list_t *lst);
-int list_set(list_t *lst, size_t index, void* item);
-
-/**
- * @brief Функция добавления нового элемента в конец односвязного линейного списка
- * @param[out] lst Pointer to the list
- * @param[in] item Указатель на элемент списка
- * @return Статус
- */
-int list_append(list_t *lst, const void *item);
+* @brief Prepends element to beginning of list.
+*
+* @param[in,out] lst Pointer to list.
+* @param[in] item Pointer to element to prepend.
+*
+* @return 0 on success. 
+* @return -1 on failure.
+*/
+int slist_prepend(slist_t *lst, const void *item);
 
 /**
- * @brief Функция добавления нового элемента в начало односвязного линейного списка
- * @param[out] lst Pointer to the list
- * @param[in] item Указатель на элемент списка
- * @return Статус
- */
-int list_prepend(list_t *lst, const void *item);
+* @brief Inserts element at specified position.
+*
+* Inserts element before node at position.
+* If position equals current list size, element is appended.
+*
+* @param[in,out] lst Pointer to list.
+* @param[in] item Pointer to element to insert.
+* @param[in] position Zero-based insertion position.
+*
+* @return 0 on success. 
+* @return -1 on failure.
+*/
+int slist_insert(slist_t *lst, const void *item, const size_t position);
 
 /**
- * @brief Функция вставляет элемент списка в указанную позицию
- * @param[out] lst Pointer to the list
- * @param[in] item Указатель на вставляемый элемент
- * @param[in] position Номер нового элемента в списке
- * @return Статус
+ * @brief Sets elements at index.
+ * 
+ * Replaces element at specified position with new value.
+ * 
+ * @param lst Pointer to list.
+ * @param index Zero-based index.
+ * @param item Pointer to new value.
+ * 
+ * @return 0 on success.
+ * @return -1 on failure.
  */
-int list_insert(list_t *lst, const void *item, const size_t position);
+int slist_set(slist_t *lst, const size_t index, const void* item);
 
 /**
- * @brief Функция удаления первого соответстующего элементов односвязного линейного списка
- * @param[out] lst Pointer to the list
- * @param[in] key Ключ сравнения, передаваемый в компаратор в качестве аргумента
- * @param[in] comparator Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
- * @return Количество удаленных элементов
- */
-int list_remove(list_t *lst, void* key, comparator_fn comparator); 
+* @brief Returns element at specified index.
+*
+* @param[in] lst Pointer to list.
+* @param[in] index Zero-based element index.
+*
+* @return Pointer to stored element.
+* @return NULL if list is NULL or index is out of range.
+*/
+void* slist_at(const slist_t *lst, const size_t index);
 
 /**
- * @brief Remove item at set position in single-linked list
- * @param[out] lst Pointer to the list
- * @param[in] position Item's position
- * @return Function's result: -1 - fail, 1 - success, 
- */
-int list_remove_at(list_t *lst, size_t position);
+* @brief Removes first element equal to key from list.
+*
+* Searches list using comparator and 
+* removes first matching element.
+* 
+* @param[in,out] lst Pointer to list.
+* @param[in] key Pointer to key value.
+* @param[in] comparator Comparator function.
+*
+* @return 0 on success. 
+* @return -1 on failure.
+*/
+int slist_remove(slist_t *lst, const void* key, comparator_fn comparator); 
 
 /**
- * @brief Функция удаления всех соответстующих элементов односвязного линейного списка
- * @param[out] lst Pointer to the list
- * @param[in] key Ключ сравнения, передаваемый в компаратор в качестве аргумента
- * @param[in] comparator Компаратор, сравнивающий ключ и текущий элемент списка. Если результат сравнения - 0, то узел будет удален
- * @return Количество удаленных элементов
- */
-int list_remove_all(list_t *lst, void* key, comparator_fn comparator); 
+* @brief Removes element at position.
+*
+* Removes element at specified zero-based position.
+* 
+* @param[in,out] lst Pointer to list.
+* @param[in] position Zero-based element position.
+*
+* @return 0 on success. 
+* @return -1 on failure.
+*/
+int slist_remove_at(slist_t *lst, const size_t position);
 
 /**
- * @brief Функция удаления первого узла списка
- * @param[out] lst Pointer to the list
- */
-void* list_pop_front(list_t *lst);
+* @brief Removes all elements equal to key from list.
+*
+* Searches list using comparator and removes every matching element.
+*
+* @param[in,out] lst Pointer to list.
+* @param[in] key Pointer to key value.
+* @param[in] comparator Comparator function.
+*
+* @return Number of removed elements.
+* @return -1 on failure. 
+*/
+int slist_remove_all(slist_t *lst, const void* key, comparator_fn comparator); 
 
 /**
- * @brief Функция удаления последнего узла списка
- * @param[out] lst Pointer to the list
- */
-void* list_pop_back(list_t *lst); 
+* @brief Removes first element from list.
+*
+* Removes first node and returns copy of removed item.
+*
+* @param[in,out] lst Pointer to list.
+*
+* @return Pointer to removed element copy
+* @return NULL if list is NULL or empty.
+*/
+void* slist_pop_front(slist_t *lst);
 
 /**
- * @brief Формирование копии списка, указатель которого передается в аргумент
- * @param[in] lst Pointer to the list
- * @return Указатель на копию списка
- */
-list_t *list_copy(const list_t *lst);
+* @brief Removes last element from list.
+*
+* Removes last node and returns copy of removed item.
+*
+* @param[in,out] lst Pointer to list.
+*
+* @return Pointer to removed element copy.
+* @return NULL if list is NULL or empty.
+*/
+void* slist_pop_back(slist_t *lst); 
 
 /**
- * @brief Функция удаления n-го количества элементов с начала односвязного линейного списка
- * @param[out] lst Pointer to the list
- * @param[in] n Количество удаляемых элементов
- * @return Количество удаленных элементов
- */
-int list_trim_front(list_t *lst, const size_t n); // +
+* @brief Removes first @p n elements from list.
+*
+* @param[in,out] lst Pointer to list.
+* @param[in] n Number of elements to remove.
+*
+* @return Number of removed elements.
+* @return 0 if @p n is zero.
+* @return -1 on failure.
+*/
+int slist_trim_front(slist_t *lst, const size_t n); 
 
 /**
- * @brief Функция удаления n-го количества элементов с конца односвязного линейного списка
- * @param[out] lst Pointer to the list
- * @param[in] n Количество удаляемых элементов
- * @return Количество удаленных элементов
- */
-int list_trim_back(list_t *lst, const size_t n); // +
+* @brief Removes last @p n elements from list.
+*
+* @param[in,out] lst Pointer to list.
+* @param[in] n Number of elements to remove.
+*
+* @return Number of removed elements.
+* @return 0 if @p n is zero.
+* @return -1 on failure.
+*/
+int slist_trim_back(slist_t *lst, const size_t n); 
 
 /**
- * @brief 
- * @param[out] lst Pointer to the list
- * @param[in] start 
- * @param[in] end 
- * @return 
- */
-int list_trim_range(list_t *list, const size_t start, const size_t end);
+* @brief Removes range of elements from list.
+*
+* Removes elements in half-open range [start, end).
+*
+* @param[in,out] lst Pointer to list.
+* @param[in] start Zero-based start index.
+* @param[in] end Zero-based end index, not included.
+*
+* @return Number of removed elements.
+* @return 0 if range is empty.
+* @return -1 on failure.
+*/
+int slist_trim_range(slist_t *lst, const size_t start, const size_t end);
 
 /**
- * @brief 
- * @param[out] lst_destination 
- * @param[in] lst_source
- * @return 
- */
-int list_concat(list_t *lst_destination, const list_t *lst_source); // копия lst_source
-
-
-int list_splice(list_t *lst_destination, list_t *lst_source); // lst_source -> null
-
- /**
- * @brief 
- * @param[in] lst Pointer to the list
- * @param[in] key 
- * @param[in] comparator 
- * @return 
- */
-int list_contains(const list_t *lst, const void *key, comparator_fn comparator);
-
- /**
- * @brief 
- * @param[in] lst Pointer to the list
- * @param[in] key 
- * @param[in] comparator 
- * @return 
- */
-int list_count(const list_t *lst, const void *key, comparator_fn comparator);
-
- /**
- * @brief 
- * @param[in] lst Pointer to the list
- * @param[in] key 
- * @param[in] comparator 
- * @return 
- */
-void* list_find(const list_t *lst, const void *key, comparator_fn comparator);
+* @brief Creates copy of list.
+*
+* Allocates new list and copies all stored elements.
+*
+* @param[in] lst Pointer to source list.
+*
+* @return Pointer to copied list on success.
+* @return NULL on failure.
+*/
+slist_t *slist_copy(const slist_t *lst);
 
 /**
- * @brief 
- * @param[in] lst Pointer to the list
- * @param[in] predicate 
- * @param[in] context 
- * @return 
+ * @brief Appends copy of source list to destination list.
+ * 
+ * Copies all elements from source list and 
+ * appends them in destination list.
+ * 
+ * @param [in,out] lst_destination Pointer to destintation list.
+ * @param [in] lst_source Pointer to source list.
+ * 
+ * @return 0 on success.
+ * @return -1 on failure.
  */
-list_t* list_filter(const list_t *lst, predicate_fn predicate, void *context);
+int slist_concat(slist_t *lst_destination, const slist_t *lst_source); 
 
-int list_sort(list_t *lst, comparator_fn cmp);
+/**
+ * @brief Moves all elements from source list to destination list.
+ * 
+ * Transfers all nodes from source list to end of destination list.
+ * Source list becomes empty after call.
+ * 
+ * @param [in,out] lst_destination Pointer to destintation list.
+ * @param [in,out] lst_source Pointer to source list.
+ * 
+ * @return 0 on success.
+ * @return -1 on failure.
+ */
+int slist_splice(slist_t *lst_destination, slist_t *lst_source); 
 
-int list_bogosort(list_t *lst, comparator_fn cmp);
+/**
+* @brief Checks if list contains element equal to key.
+*
+* Searches list using comparator.
+*
+* @param[in] list Pointer to list.
+* @param[in] key Pointer to key value.
+* @param[in] comparator Comparator function.
+*
+* @return 1 if matching element is found.
+* @return 0 if matching element is not found.
+* @return -1 on failure.
+*/
+int slist_contains(const slist_t *lst, const void *key, comparator_fn comparator);
 
-int list_is_sorted(list_t *lst, comparator_fn cmp);
+/**
+* @brief Counts elements equal to key.
+*
+* Searches list using comparator and counts matching elements.
+*
+* @param[in] list Pointer to list.
+* @param[in] key Pointer to key value.
+* @param[in] comparator Comparator function.
+*
+* @return Number of matching elements.
+* @return -1 on failure.
+*/
+int slist_count(const slist_t *lst, const void *key, comparator_fn comparator);
+
+/**
+ * @brief Finds element equal to key.
+ * 
+ * Searches list using comparator and 
+ * return first matching element.
+ * 
+ * @param lst Pointer to list.
+ * @param key Pointer to key value.
+ * @param comparator Comparator function.
+ * 
+ * @return Pointer to found element.
+ * @return NULL if not found or on failure.
+ */
+void* slist_find(const slist_t *lst, const void *key, comparator_fn comparator);
+
+/**
+* @brief Creates filtered copy of list.
+*
+* Copies elements for which predicate returns non-zero value.
+*
+* @param[in] lst Pointer to source list.
+* @param[in] context Pointer to user-defined predicate context.
+* @param[in] predicate Predicate function with context.
+*
+* @return Pointer to filtered list on success.
+* @return NULL on failure.
+*/
+slist_t* slist_filter(const slist_t *lst, predicate_fn predicate, const void *context);
+
+/**
+ * @brief Checks if list is sorted.
+ * 
+ * @param [in] lst Pointer to list.
+ * @param [in] comparator Comparator function.
+ * 
+ * @return 1 if list is sorted.
+ * @return 0 if list is not sorted.
+ * @return -1 on failure.
+ */
+int slist_is_sorted(slist_t *lst, comparator_fn comparator);
+
+/**
+ * @brief Sorts list using comparator.
+ * 
+ * @param [in,out] lst Pointer to list.
+ * @param [in] comparator Comparator function.
+ * 
+ * @return 0 on success.
+ * @return -1 on failure.
+ */
+int slist_sort(slist_t *lst, comparator_fn comparator);
+
+/**
+ * @brief Sorts list using bogosort algorithm.
+ * 
+ * @param [in,out] lst Pointer to list.
+ * @param [in] comparator Comparator function.
+ * 
+ * @return 0 on success.
+ * @return -1 on failure.
+ * 
+ * @warning Extremely inefficient algotithm.
+ * Average time complexity is unbounded (0(n!)).
+ * Intended for testing or educational purposes only.
+ */
+int slist_bogosort(slist_t *lst, comparator_fn comparator);
+
+/**
+ * @brief Returns pointer to first node.
+ * 
+ * @param [in] lst Pointer to list.
+ * 
+ * @return Pointer to head node.
+ * @return NULL if @p lst is NULL or empty.
+ */
+snode_t* slist_head(const slist_t *lst);
+
+/**
+ * @brief Returns pointer to last node.
+ * 
+ * @param [in] lst Pointer to list.
+ * 
+ * @return Pointer to tail node.
+ * @return NULL if @p lst is NULL or empty.
+ */
+snode_t* slist_tail(const slist_t *lst);
+
+/**
+ * @brief Returns pointer to next node.
+ * 
+ * @param [in] nod Pointer to node.
+ * 
+ * @return Pointer to next node.
+ * @return NULL if @p nod is NULL or last node.
+ */
+snode_t *snode_next(const snode_t *nod);
+
+/**
+ * @brief Returns pointer to node data.
+ * 
+ * @param [in] nod Pointer to node
+ * 
+ * @return Pointer to stored data.
+ * @return NULL if @p nod is NULL
+ */
+void* snode_data(const snode_t *nod);
+
+/**
+ * @brief Returns number of stored elements in list.
+ * 
+ * @param [in] lst Pointer to list.
+ * 
+ * @return Number of elements in list.
+ * @return 0 if @p lst is NULL.
+ */
+size_t slist_size(const slist_t *lst);
+
+/**
+ * @brief Returns size of stored element.
+ * 
+ * @param [in] lst Pointer to list.
+ * 
+ * @return Size of element in bytes.
+ * @return 0 if @p lst is NULL.
+ */
+size_t slist_item_size(const slist_t *lst);
+
+/**
+ * @brief Returns first element in list.
+ * 
+ * @param [in] lst Pointer to list.
+ * 
+ * @return Pointer to first element.
+ * @return NULL if list is NULL or empty.
+ */
+void* slist_front_item(const slist_t *lst);
+
+/**
+ * @brief Returns last element in list.
+ * 
+ * @param [in] lst Pointer to list.
+ * 
+ * @return Pointer to last element.
+ * @return NULL if list is NULL or empty.
+ */
+void* slist_back_item(const slist_t *lst);
 
 #endif
