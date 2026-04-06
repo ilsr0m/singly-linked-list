@@ -5,8 +5,8 @@ project(list_c VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
-add_library(list_c SHARED src/list_c.c)
-target_include_directories(list_c PUBLIC include)
+add_library(single_list SHARED src/single_list.c)
+target_include_directories(single_list PUBLIC include)
 
 enable_testing()
 
@@ -18,7 +18,7 @@ add_executable(list_test
 
 target_link_libraries(list_test
     PRIVATE
-    list_c
+    single_list
     GTest::gtest_main
     
 )
