@@ -1,19 +1,20 @@
-#ifndef LIST_BASE_HPP
-#define LIST_BASE_HPP
+#ifndef TEST_BASE_HPP
+#define TEST_BASE_HPP
 
 #include <gtest/gtest.h>
 #include <vector>
 
-extern "C" {
-    #include "single_list.h"
-}
+#include "test_utils.h"
+
+#define API_RESULT_ON_SUCCESS 0
+#define API_RESULT_ON_FAILURE -1
 
 /*
     The base class for each list's test case
     Contains common methods
 */
 template <typename BaseType>
-class ListBaseTest : public ::testing::TestWithParam<BaseType> {
+class TestBase : public ::testing::TestWithParam<BaseType> {
 protected:
     slist_t *lst;
 
@@ -62,6 +63,7 @@ public:
 
     virtual void CompareWith(std::vector<int> vec) {
         if(slist_empty(lst)) { 
+            EXPECT_EQ(slist_size(lst), vec.size());
             IsEmpty(); 
             return; 
         }
@@ -103,5 +105,6 @@ public:
         EXPECT_EQ(slist_empty(li), 0);
     }
 };
+
 
 #endif
