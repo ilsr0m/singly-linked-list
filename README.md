@@ -1,5 +1,5 @@
-# list_c
-#### API of one-way linked list on C language
+# Singly-linked list
+#### API of singly-linked list on C language
 
 - How to build the project
 ```shell
