@@ -1,5 +1,5 @@
-#ifndef LIST_SORT_HPP
-#define LIST_SORT_HPP
+#ifndef SLIST_SORT_HPP
+#define SLIST_SORT_HPP
 
 #include "test_base.hpp"
 

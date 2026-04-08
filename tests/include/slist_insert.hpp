@@ -48,7 +48,7 @@ struct InsertParam {
     
     InsertParam( std::vector<int> baseValues, std::vector<int> targetValues,
         int item, int position, int result) 
-        : baseValues{baseValues}, targetValues{targetValues},
+        : baseValues{std::move(baseValues)}, targetValues{std::move(targetValues)},
          item{item}, position{position}, result{result} {}
 };
 

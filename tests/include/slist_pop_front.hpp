@@ -28,7 +28,7 @@ struct PopFrontParam {
     std::vector<int> target;
     std::vector<int> popped;
     PopFrontParam(std::vector<int> base, unsigned popCount, std::vector<int> target, std::vector<int> popped) 
-        : base{base}, count{popCount}, target{target}, popped{popped} {}
+        : base{std::move(base)}, count{popCount}, target{std::move(target)}, popped{std::move(popped)} {}
 };
 
 class PopFront : public TestBase<PopFrontParam> {};

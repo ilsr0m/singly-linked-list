@@ -39,7 +39,7 @@ struct RemoveAtParam {
 
     RemoveAtParam(std::vector<int> base, std::vector<int> positions, 
         std::vector<int> target, int result) 
-        : base{base}, positions{positions}, target{target}, result{result} {}
+        : base{std::move(base)}, positions{std::move(positions)}, target{std::move(target)}, result{result} {}
 };
 
 class RemoveAt : public TestBase<RemoveAtParam> {};

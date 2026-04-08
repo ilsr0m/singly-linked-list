@@ -34,7 +34,7 @@ struct _AtParam {
     size_t index;
     int value;
     _AtParam(std::vector<int> base, size_t index, int value) 
-            : base{base}, index{index}, value{value}   {}
+            : base{std::move(base)}, index{index}, value{value}   {}
 };
 
 class _At : public TestBase<_AtParam> {};

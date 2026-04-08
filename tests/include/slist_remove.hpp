@@ -45,7 +45,7 @@ struct RemoveParam {
     int result;
 
     RemoveParam(std::vector<int> base, std::vector<int> keys, std::vector<int> target, comparator_fn cmp, int result) : 
-        cmp{cmp}, keys{keys}, base{base}, target{target}, result{result} {}
+        cmp{cmp}, keys{std::move(keys)}, base{std::move(base)}, target{std::move(target)}, result{result} {}
 };
 
 class Remove : public TestBase<RemoveParam> {
