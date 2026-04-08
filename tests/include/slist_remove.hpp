@@ -37,24 +37,24 @@ INSTANTIATE_TEST_SUITE_P(RemoveSuite, RemoveNull, ::testing::Values(
 /*
     Test full cases
 */
-struct RemoveParam {
+struct RemoveFullParam {
     comparator_fn cmp;
     std::vector<int> base;
     std::vector<int> keys;
     std::vector<int> target;
     int result;
 
-    RemoveParam(std::vector<int> base, std::vector<int> keys, std::vector<int> target, comparator_fn cmp, int result) : 
+    RemoveFullParam(std::vector<int> base, std::vector<int> keys, std::vector<int> target, comparator_fn cmp, int result) : 
         cmp{cmp}, keys{std::move(keys)}, base{std::move(base)}, target{std::move(target)}, result{result} {}
 };
 
-class Remove : public TestBase<RemoveParam> {
+class RemoveFull : public TestBase<RemoveFullParam> {
 public:
 
 };
 
-TEST_P(Remove, RemoveTest) {
-    RemoveParam rm = GetParam();
+TEST_P(RemoveFull, RemoveTest) {
+    RemoveFullParam rm = GetParam();
     FillList(rm.base);
     for(auto k : rm.keys) {
         EXPECT_EQ(slist_remove(lst, &k, rm.cmp), rm.result);
@@ -64,15 +64,15 @@ TEST_P(Remove, RemoveTest) {
 }
 
 // base, keys, target 
-INSTANTIATE_TEST_SUITE_P(RemoveSuite, Remove, ::testing::Values(
-    RemoveParam({1, 2, 3, 4, 5, 1, 1, 7}, {6}                     , {1, 2, 3, 4, 5, 1, 1, 7}, &test_utils::ascending, API_RESULT_ON_FAILURE), // invalid key
-    RemoveParam({1, 2, 3, 4, 5, 1, 1, 7}, {1}                     , {2, 3, 4, 5, 1, 1, 7}   , &test_utils::ascending, API_RESULT_ON_SUCCESS), // single remove in head
-    RemoveParam({1, 2, 3, 4, 5, 1, 1, 7}, {7}                     , {1, 2, 3, 4, 5, 1, 1}   , &test_utils::ascending, API_RESULT_ON_SUCCESS), // single remove in tail
-    RemoveParam({1, 2, 3, 4, 5, 1, 1, 7}, {4}                     , {1, 2, 3, 5, 1, 1, 7}   , &test_utils::ascending, API_RESULT_ON_SUCCESS), // single remove in middle
-    RemoveParam({0, 2, 3, 4, 5, 1, 1, 7}, {1, 1}                  , {0, 2, 3, 4, 5, 7}      , &test_utils::ascending, API_RESULT_ON_SUCCESS), // multiple remove
-    RemoveParam({0, 2, 3, 4, 5, 1, 1, 7}, {0, 2}                  , {3, 4, 5, 1, 1, 7}      , &test_utils::ascending, API_RESULT_ON_SUCCESS), // single remove in middle
-    RemoveParam({0, 2, 3, 4, 5, 1, 1, 7}, {7, 1}                  , {0, 2, 3, 4, 5, 1}      , &test_utils::ascending, API_RESULT_ON_SUCCESS), // single remove in middle
-    RemoveParam({0, 2, 3, 4, 5, 1, 1, 7}, {0, 2, 3, 4, 5, 1, 1, 7}, {}                      , &test_utils::ascending, API_RESULT_ON_SUCCESS)  // remove all values
+INSTANTIATE_TEST_SUITE_P(RemoveSuite, RemoveFull, ::testing::Values(
+    RemoveFullParam({1, 2, 3, 4, 5, 1, 1, 7}, {6}                     , {1, 2, 3, 4, 5, 1, 1, 7}, &test_utils::ascending, API_RESULT_ON_FAILURE), // invalid key
+    RemoveFullParam({1, 2, 3, 4, 5, 1, 1, 7}, {1}                     , {2, 3, 4, 5, 1, 1, 7}   , &test_utils::ascending, API_RESULT_ON_SUCCESS), // single remove in head
+    RemoveFullParam({1, 2, 3, 4, 5, 1, 1, 7}, {7}                     , {1, 2, 3, 4, 5, 1, 1}   , &test_utils::ascending, API_RESULT_ON_SUCCESS), // single remove in tail
+    RemoveFullParam({1, 2, 3, 4, 5, 1, 1, 7}, {4}                     , {1, 2, 3, 5, 1, 1, 7}   , &test_utils::ascending, API_RESULT_ON_SUCCESS), // single remove in middle
+    RemoveFullParam({0, 2, 3, 4, 5, 1, 1, 7}, {1, 1}                  , {0, 2, 3, 4, 5, 7}      , &test_utils::ascending, API_RESULT_ON_SUCCESS), // multiple remove
+    RemoveFullParam({0, 2, 3, 4, 5, 1, 1, 7}, {0, 2}                  , {3, 4, 5, 1, 1, 7}      , &test_utils::ascending, API_RESULT_ON_SUCCESS), // single remove in middle
+    RemoveFullParam({0, 2, 3, 4, 5, 1, 1, 7}, {7, 1}                  , {0, 2, 3, 4, 5, 1}      , &test_utils::ascending, API_RESULT_ON_SUCCESS), // single remove in middle
+    RemoveFullParam({0, 2, 3, 4, 5, 1, 1, 7}, {0, 2, 3, 4, 5, 1, 1, 7}, {}                      , &test_utils::ascending, API_RESULT_ON_SUCCESS)  // remove all values
 ));
 
 #endif

@@ -22,10 +22,10 @@ INSTANTIATE_TEST_SUITE_P(PopBackNullSuite, PopBackNull, ::testing::Values (
 /*
     Test full cases
 */
-class PopBack : public PopFront {};
+class PopBackFull : public PopFrontFull {};
 
-TEST_P(PopBack, PopBackTest) {
-    PopFrontParam pop = GetParam();
+TEST_P(PopBackFull, PopBackTest) {
+    PopFrontFullParam pop = GetParam();
     FillList(pop.base);
     for(unsigned i = 0; i < pop.count; i++)
         EXPECT_EQ(*(int*)slist_pop_back(lst), pop.popped[i]);
@@ -33,10 +33,10 @@ TEST_P(PopBack, PopBackTest) {
     ClearList();
 }
 
-INSTANTIATE_TEST_SUITE_P(PopBackFullSuite, PopBack, ::testing::Values(
-    PopFrontParam({1, 2, 3}, 1, {1, 2}, {3}),
-    PopFrontParam({1, 2, 3}, 2, {1}, {3, 2}),
-    PopFrontParam({1, 2, 3}, 3, {}, {3, 2, 1})
+INSTANTIATE_TEST_SUITE_P(PopBackFullSuite, PopBackFull, ::testing::Values(
+    PopFrontFullParam({1, 2, 3}, 1, {1, 2}, {3}),
+    PopFrontFullParam({1, 2, 3}, 2, {1}, {3, 2}),
+    PopFrontFullParam({1, 2, 3}, 3, {}, {3, 2, 1})
 ));
 
 #endif

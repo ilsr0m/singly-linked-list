@@ -31,21 +31,21 @@ INSTANTIATE_TEST_SUITE_P(RemoveAtSuite, RemoveAtNull, ::testing::Values(
 /*
     Test full cases
 */
-struct RemoveAtParam {
+struct RemoveAtFullParam {
     std::vector<int> base;
     std::vector<int> positions;
     std::vector<int> target;
     int result;
 
-    RemoveAtParam(std::vector<int> base, std::vector<int> positions, 
+    RemoveAtFullParam(std::vector<int> base, std::vector<int> positions, 
         std::vector<int> target, int result) 
         : base{std::move(base)}, positions{std::move(positions)}, target{std::move(target)}, result{result} {}
 };
 
-class RemoveAt : public TestBase<RemoveAtParam> {};
+class RemoveAtFull : public TestBase<RemoveAtFullParam> {};
 
-TEST_P(RemoveAt, RemoveAtTest) {
-    RemoveAtParam rat = GetParam();
+TEST_P(RemoveAtFull, RemoveAtTest) {
+    RemoveAtFullParam rat = GetParam();
     FillList(rat.base);
     for(auto p : rat.positions) 
         EXPECT_EQ(slist_remove_at(lst, p), rat.result);
@@ -53,15 +53,15 @@ TEST_P(RemoveAt, RemoveAtTest) {
     ClearList();
 }
 
-INSTANTIATE_TEST_SUITE_P(RemoveAtSuite, RemoveAt, ::testing::Values(
-    RemoveAtParam({}, {1}      , {}, API_RESULT_ON_FAILURE),
-    RemoveAtParam({}, {1, 2, 3}, {}, API_RESULT_ON_FAILURE),
-    RemoveAtParam({1, 2, 3, 4, 5, 6}, {0}, {2, 3, 4, 5, 6}, API_RESULT_ON_SUCCESS),
-    RemoveAtParam({1, 2, 3, 4, 5, 6}, {0, 0}, {3, 4, 5, 6}, API_RESULT_ON_SUCCESS),
-    RemoveAtParam({1, 2, 3, 4, 5, 6}, {5}, {1, 2, 3, 4, 5}, API_RESULT_ON_SUCCESS),
-    RemoveAtParam({1, 2, 3, 4, 5, 6}, {5, 4}, {1, 2, 3, 4}, API_RESULT_ON_SUCCESS),
-    RemoveAtParam({1, 2, 3, 4, 5, 6}, {2}, {1, 2, 4, 5, 6}, API_RESULT_ON_SUCCESS),
-    RemoveAtParam({1, 2, 3, 4, 5, 6}, {2, 2}, {1, 2, 5, 6}, API_RESULT_ON_SUCCESS)
+INSTANTIATE_TEST_SUITE_P(RemoveAtSuite, RemoveAtFull, ::testing::Values(
+    RemoveAtFullParam({}, {1}      , {}, API_RESULT_ON_FAILURE),
+    RemoveAtFullParam({}, {1, 2, 3}, {}, API_RESULT_ON_FAILURE),
+    RemoveAtFullParam({1, 2, 3, 4, 5, 6}, {0}, {2, 3, 4, 5, 6}, API_RESULT_ON_SUCCESS),
+    RemoveAtFullParam({1, 2, 3, 4, 5, 6}, {0, 0}, {3, 4, 5, 6}, API_RESULT_ON_SUCCESS),
+    RemoveAtFullParam({1, 2, 3, 4, 5, 6}, {5}, {1, 2, 3, 4, 5}, API_RESULT_ON_SUCCESS),
+    RemoveAtFullParam({1, 2, 3, 4, 5, 6}, {5, 4}, {1, 2, 3, 4}, API_RESULT_ON_SUCCESS),
+    RemoveAtFullParam({1, 2, 3, 4, 5, 6}, {2}, {1, 2, 4, 5, 6}, API_RESULT_ON_SUCCESS),
+    RemoveAtFullParam({1, 2, 3, 4, 5, 6}, {2, 2}, {1, 2, 5, 6}, API_RESULT_ON_SUCCESS)
 ));
 
 #endif

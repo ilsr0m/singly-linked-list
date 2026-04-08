@@ -39,23 +39,23 @@ INSTANTIATE_TEST_SUITE_P(InsertNullSuite, InsertNull, ::testing::Values(
 /*
     Test full cases
 */
-struct InsertParam {
+struct InsertFullParam {
     std::vector<int> baseValues;
     std::vector<int> targetValues;
     int item;
     int position;
     int result;
     
-    InsertParam( std::vector<int> baseValues, std::vector<int> targetValues,
+    InsertFullParam( std::vector<int> baseValues, std::vector<int> targetValues,
         int item, int position, int result) 
         : baseValues{std::move(baseValues)}, targetValues{std::move(targetValues)},
          item{item}, position{position}, result{result} {}
 };
 
-class Insert : public TestBase<InsertParam> {};
+class InsertFull : public TestBase<InsertFullParam> {};
 
-TEST_P(Insert, InsertTest) {
-    InsertParam testValues = GetParam();
+TEST_P(InsertFull, InsertTest) {
+    InsertFullParam testValues = GetParam();
     FillList(testValues.baseValues);
     int result = slist_insert(lst, &testValues.item, testValues.position);
     if(testValues.position > testValues.baseValues.size()) {
@@ -69,15 +69,15 @@ TEST_P(Insert, InsertTest) {
     ClearList();
 };
 
-INSTANTIATE_TEST_SUITE_P(InsertFullSuite, Insert, ::testing::Values(
-    InsertParam({}          , {}             , 2, 1, API_RESULT_ON_FAILURE), // Position > Size 
-    InsertParam({1, 2, 3, 4}, {}             , 2, 5, API_RESULT_ON_FAILURE), // Position > Size 
-    InsertParam({}          , {0}            , 0, 0, API_RESULT_ON_SUCCESS), // Empty
-    InsertParam({1, 2, 3, 4}, {2, 1, 2, 3, 4}, 2, 0, API_RESULT_ON_SUCCESS), // Insert as the first item
-    InsertParam({1, 2, 3, 4}, {1, 2, 3, 4, 2}, 2, 4, API_RESULT_ON_SUCCESS), // Insert as the last item
-    InsertParam({1, 2, 3, 4}, {1, 5, 2, 3, 4}, 5, 1, API_RESULT_ON_SUCCESS), // Insert as the middle item
-    InsertParam({1, 2, 3, 4}, {1, 2, 5, 3, 4}, 5, 2, API_RESULT_ON_SUCCESS), // Insert as the middle item
-    InsertParam({1, 2, 3, 4}, {1, 2, 3, 2, 4}, 2, 3, API_RESULT_ON_SUCCESS)  // Insert as the middle item
+INSTANTIATE_TEST_SUITE_P(InsertFullSuite, InsertFull, ::testing::Values(
+    InsertFullParam({}          , {}             , 2, 1, API_RESULT_ON_FAILURE), // Position > Size 
+    InsertFullParam({1, 2, 3, 4}, {}             , 2, 5, API_RESULT_ON_FAILURE), // Position > Size 
+    InsertFullParam({}          , {0}            , 0, 0, API_RESULT_ON_SUCCESS), // Empty
+    InsertFullParam({1, 2, 3, 4}, {2, 1, 2, 3, 4}, 2, 0, API_RESULT_ON_SUCCESS), // Insert as the first item
+    InsertFullParam({1, 2, 3, 4}, {1, 2, 3, 4, 2}, 2, 4, API_RESULT_ON_SUCCESS), // Insert as the last item
+    InsertFullParam({1, 2, 3, 4}, {1, 5, 2, 3, 4}, 5, 1, API_RESULT_ON_SUCCESS), // Insert as the middle item
+    InsertFullParam({1, 2, 3, 4}, {1, 2, 5, 3, 4}, 5, 2, API_RESULT_ON_SUCCESS), // Insert as the middle item
+    InsertFullParam({1, 2, 3, 4}, {1, 2, 3, 2, 4}, 2, 3, API_RESULT_ON_SUCCESS)  // Insert as the middle item
 ));
 
 #endif

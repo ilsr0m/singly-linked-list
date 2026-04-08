@@ -28,10 +28,10 @@ INSTANTIATE_TEST_SUITE_P(RemoveAllNullSuite, RemoveAllNull, ::testing::Values(
 /*
     Test full cases
 */
-class RemoveAll : public Remove {};
+class RemoveAllFull : public RemoveFull {};
 
-TEST_P(RemoveAll, RemoveAllTest) {
-    RemoveParam rm = GetParam();
+TEST_P(RemoveAllFull, RemoveAllTest) {
+    RemoveFullParam rm = GetParam();
     FillList(rm.base);
     EXPECT_EQ(slist_remove_all(lst, &rm.keys[0], rm.cmp), rm.result);
     CompareWith(rm.target);
@@ -39,14 +39,14 @@ TEST_P(RemoveAll, RemoveAllTest) {
 }
 
 // base, keys, target 
-INSTANTIATE_TEST_SUITE_P(RemoveAllFullSuite, RemoveAll, ::testing::Values(
-    RemoveParam({1, 2, 3, 4, 5, 1, 1, 7}, {6}                     , {1, 2, 3, 4, 5, 1, 1, 7}, &test_utils::ascending, API_RESULT_ON_FAILURE), // invalid key
-    RemoveParam({1, 2, 3, 4, 5, 1, 1, 7}, {1}                     , {2, 3, 4, 5, 7}         , &test_utils::ascending, 3), // single remove in head
-    RemoveParam({1, 2, 3, 4, 5, 1, 1, 7}, {7}                     , {1, 2, 3, 4, 5, 1, 1}   , &test_utils::ascending, 1), // single remove in tail
-    RemoveParam({1, 2, 3, 4, 5, 1, 1, 7}, {4}                     , {1, 2, 3, 5, 1, 1, 7}   , &test_utils::ascending, 1), // single remove in middle
-    RemoveParam({1, 2, 3, 4, 5, 1, 1, 1}, {1}                     , {2, 3, 4, 5}            , &test_utils::ascending, 4), // single remove in head
-    RemoveParam({1, 1, 3, 4, 5, 1, 1, 7}, {1}                     , {3, 4, 5, 7}            , &test_utils::ascending, 4), // single remove in tail
-    RemoveParam({0, 2, 3, 4, 5, 1, 1, 7}, {1}                     , {0, 2, 3, 4, 5, 7}      , &test_utils::ascending, 2), // multiple remove
-    RemoveParam({0, 0, 3, 0, 5, 0, 1, 0}, {0}                     , {3, 5, 1}      , &test_utils::ascending, 5) // single remove in middle
+INSTANTIATE_TEST_SUITE_P(RemoveAllFullSuite, RemoveAllFull, ::testing::Values(
+    RemoveFullParam({1, 2, 3, 4, 5, 1, 1, 7}, {6}                     , {1, 2, 3, 4, 5, 1, 1, 7}, &test_utils::ascending, API_RESULT_ON_FAILURE), // invalid key
+    RemoveFullParam({1, 2, 3, 4, 5, 1, 1, 7}, {1}                     , {2, 3, 4, 5, 7}         , &test_utils::ascending, 3), // single remove in head
+    RemoveFullParam({1, 2, 3, 4, 5, 1, 1, 7}, {7}                     , {1, 2, 3, 4, 5, 1, 1}   , &test_utils::ascending, 1), // single remove in tail
+    RemoveFullParam({1, 2, 3, 4, 5, 1, 1, 7}, {4}                     , {1, 2, 3, 5, 1, 1, 7}   , &test_utils::ascending, 1), // single remove in middle
+    RemoveFullParam({1, 2, 3, 4, 5, 1, 1, 1}, {1}                     , {2, 3, 4, 5}            , &test_utils::ascending, 4), // single remove in head
+    RemoveFullParam({1, 1, 3, 4, 5, 1, 1, 7}, {1}                     , {3, 4, 5, 7}            , &test_utils::ascending, 4), // single remove in tail
+    RemoveFullParam({0, 2, 3, 4, 5, 1, 1, 7}, {1}                     , {0, 2, 3, 4, 5, 7}      , &test_utils::ascending, 2), // multiple remove
+    RemoveFullParam({0, 0, 3, 0, 5, 0, 1, 0}, {0}                     , {3, 5, 1}      , &test_utils::ascending, 5) // single remove in middle
 ));
 #endif

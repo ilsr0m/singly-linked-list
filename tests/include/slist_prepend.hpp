@@ -23,7 +23,7 @@ INSTANTIATE_TEST_SUITE_P(PrependNullSuite, AppendNull, ::testing::Values (
 /*
     Test full cases
 */
-class Prepend : public Append {
+class Prepend : public AppendFull {
 public:
     void CompareWith(std::vector<int> vec) override {
         if(slist_empty(lst)) { 
@@ -44,7 +44,7 @@ public:
 };
 
 TEST_P(Prepend, PrependTest) {
-    AppendParam testValues = GetParam();  
+    AppendFullParam testValues = GetParam();  
 
     if(testValues.values.size()){
         // Append all vector's values one by one
@@ -58,11 +58,11 @@ TEST_P(Prepend, PrependTest) {
 }
 
 INSTANTIATE_TEST_SUITE_P(PrependFullSuite, Prepend, ::testing::Values(
-    AppendParam({}                  ),
-    AppendParam({111}               ),
-    AppendParam({1, 2}              ),
-    AppendParam({2, 5, 4}           ),
-    AppendParam({-11, 1, 2, 5, 6, 9})
+    AppendFullParam({}                  ),
+    AppendFullParam({111}               ),
+    AppendFullParam({1, 2}              ),
+    AppendFullParam({2, 5, 4}           ),
+    AppendFullParam({-11, 1, 2, 5, 6, 9})
 ));
 
 #endif

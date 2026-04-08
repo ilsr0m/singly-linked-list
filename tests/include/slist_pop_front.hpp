@@ -22,19 +22,19 @@ INSTANTIATE_TEST_SUITE_P(PopFrontNullSuite, PopFrontNull, ::testing::Values (
 /*
     Test full cases
 */
-struct PopFrontParam {
+struct PopFrontFullParam {
     std::vector<int> base;
     unsigned count;
     std::vector<int> target;
     std::vector<int> popped;
-    PopFrontParam(std::vector<int> base, unsigned popCount, std::vector<int> target, std::vector<int> popped) 
+    PopFrontFullParam(std::vector<int> base, unsigned popCount, std::vector<int> target, std::vector<int> popped) 
         : base{std::move(base)}, count{popCount}, target{std::move(target)}, popped{std::move(popped)} {}
 };
 
-class PopFront : public TestBase<PopFrontParam> {};
+class PopFrontFull : public TestBase<PopFrontFullParam> {};
 
-TEST_P(PopFront, PopFrontTest) {
-    PopFrontParam pop = GetParam();
+TEST_P(PopFrontFull, PopFrontTest) {
+    PopFrontFullParam pop = GetParam();
     FillList(pop.base);
     for(unsigned i = 0; i < pop.count; i++)
         EXPECT_EQ(*(int*)slist_pop_front(lst), pop.popped[i]);
@@ -42,10 +42,10 @@ TEST_P(PopFront, PopFrontTest) {
     ClearList();
 }
 
-INSTANTIATE_TEST_SUITE_P(PopFrontFullSuite, PopFront, ::testing::Values(
-    PopFrontParam({1, 2, 3}, 1, {2, 3}, {1}),
-    PopFrontParam({1, 2, 3}, 2, {3}, {1, 2}),
-    PopFrontParam({1, 2, 3}, 3, {}, {1, 2, 3})
+INSTANTIATE_TEST_SUITE_P(PopFrontFullSuite, PopFrontFull, ::testing::Values(
+    PopFrontFullParam({1, 2, 3}, 1, {2, 3}, {1}),
+    PopFrontFullParam({1, 2, 3}, 2, {3}, {1, 2}),
+    PopFrontFullParam({1, 2, 3}, 3, {}, {1, 2, 3})
 ));
 
 #endif

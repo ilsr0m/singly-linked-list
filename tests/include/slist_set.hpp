@@ -32,7 +32,7 @@ INSTANTIATE_TEST_SUITE_P(SetNullSuite, SetNull, ::testing::Values(
 /*
     Test full cases
 */
-struct _SetParam {
+struct SetFullParam {
     struct DataParam {
         size_t index;
         int item;
@@ -44,16 +44,16 @@ struct _SetParam {
     std::vector<DataParam> datas;
     std::vector<int> target;
     int result;
-    _SetParam(std::vector<int> base, std::vector<DataParam> datas, 
+    SetFullParam(std::vector<int> base, std::vector<DataParam> datas, 
         std::vector<int> target, int result) 
             : base{base}, datas{datas}, 
             target{target}, result{result}   {}
 };
 
-class _Set : public TestBase<_SetParam> {};
+class SetFull : public TestBase<SetFullParam> {};
 
-TEST_P(_Set, SetTest) {
-    _SetParam set = GetParam();
+TEST_P(SetFull, SetTest) {
+    SetFullParam set = GetParam();
     FillList(set.base);
     for(auto d : set.datas) {
         int result = slist_set(lst, d.index, &d.item);
@@ -63,15 +63,15 @@ TEST_P(_Set, SetTest) {
     ClearList();
 }
 
-INSTANTIATE_TEST_SUITE_P(SetFullSuite, _Set, ::testing::Values(
-    _SetParam({1, 2, 3}, {{4, 0}}, {1, 2, 3}, API_RESULT_ON_FAILURE), // index out of range
+INSTANTIATE_TEST_SUITE_P(SetFullSuite, SetFull, ::testing::Values(
+    SetFullParam({1, 2, 3}, {{4, 0}}, {1, 2, 3}, API_RESULT_ON_FAILURE), // index out of range
 
-    _SetParam({1, 2, 3}, {{0, 0}}, {0, 2, 3}, API_RESULT_ON_SUCCESS), 
-    _SetParam({1, 2, 3}, {{1, 0}}, {1, 0, 3}, API_RESULT_ON_SUCCESS),
-    _SetParam({1, 2, 3}, {{2, 0}}, {1, 2, 0}, API_RESULT_ON_SUCCESS),
-    _SetParam({1, 2, 3}, {{0, 0}, {1, 0}}, {0, 0, 3}, API_RESULT_ON_SUCCESS),
-    _SetParam({1, 2, 3}, {{2, 0}, {0, 6}, {1, 5}}, {6, 5, 0}, API_RESULT_ON_SUCCESS),
-    _SetParam({1, 2, 3, 4}, {{1, 0}, {2, 7}}, {1, 0, 7, 4}, API_RESULT_ON_SUCCESS)
+    SetFullParam({1, 2, 3}, {{0, 0}}, {0, 2, 3}, API_RESULT_ON_SUCCESS), 
+    SetFullParam({1, 2, 3}, {{1, 0}}, {1, 0, 3}, API_RESULT_ON_SUCCESS),
+    SetFullParam({1, 2, 3}, {{2, 0}}, {1, 2, 0}, API_RESULT_ON_SUCCESS),
+    SetFullParam({1, 2, 3}, {{0, 0}, {1, 0}}, {0, 0, 3}, API_RESULT_ON_SUCCESS),
+    SetFullParam({1, 2, 3}, {{2, 0}, {0, 6}, {1, 5}}, {6, 5, 0}, API_RESULT_ON_SUCCESS),
+    SetFullParam({1, 2, 3, 4}, {{1, 0}, {2, 7}}, {1, 0, 7, 4}, API_RESULT_ON_SUCCESS)
 ));
 
 #endif

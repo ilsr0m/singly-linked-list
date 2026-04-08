@@ -30,15 +30,15 @@ INSTANTIATE_TEST_SUITE_P(AppendNullSuite, AppendNull, ::testing::Values (
 /*
     Test full cases
 */
-struct AppendParam {
+struct AppendFullParam {
     std::vector<int> values;
-    AppendParam(std::vector<int> values) : values{std::move(values)} {}
+    AppendFullParam(std::vector<int> values) : values{std::move(values)} {}
 };
 
-class Append : public TestBase<AppendParam> {};
+class AppendFull : public TestBase<AppendFullParam> {};
 
-TEST_P(Append, AppendTest) {
-    AppendParam testValues = GetParam();
+TEST_P(AppendFull, AppendTest) {
+    AppendFullParam testValues = GetParam();
     if(testValues.values.size()) {
         // Append all vector's values one by one
         for(auto v : testValues.values)
@@ -50,12 +50,12 @@ TEST_P(Append, AppendTest) {
     IsEmpty();
 }
 
-INSTANTIATE_TEST_SUITE_P(AppendFullSuite, Append, ::testing::Values (
-    AppendParam({}                    ),
-    AppendParam({111}                 ),
-    AppendParam({1, 2}                ),
-    AppendParam({2, 5, 4}             ),
-    AppendParam({-11, 1, 2, 5, 6, 9}  )
+INSTANTIATE_TEST_SUITE_P(AppendFullSuite, AppendFull, ::testing::Values (
+    AppendFullParam({}                    ),
+    AppendFullParam({111}                 ),
+    AppendFullParam({1, 2}                ),
+    AppendFullParam({2, 5, 4}             ),
+    AppendFullParam({-11, 1, 2, 5, 6, 9}  )
 ));
 
 #endif

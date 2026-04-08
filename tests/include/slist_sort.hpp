@@ -30,19 +30,19 @@ INSTANTIATE_TEST_SUITE_P(SortNullSuite, SortNull, ::testing::Values(
 /*
     Test full cases
 */
-struct SortParam {
+struct SortFullParam {
     comparator_fn comparator;
     std::vector<int> disordered;
     std::vector<int> sorted;
 
-    SortParam(comparator_fn comparator, std::vector<int> disordered, std::vector<int> sorted) : 
+    SortFullParam(comparator_fn comparator, std::vector<int> disordered, std::vector<int> sorted) : 
         comparator{comparator}, disordered{disordered}, sorted{sorted} {}
 };
 
-class Sort : public TestBase<SortParam> {};  
+class SortFull : public TestBase<SortFullParam> {};  
 
-TEST_P(Sort, SortTest) {
-    SortParam testValues = GetParam();
+TEST_P(SortFull, SortTest) {
+    SortFullParam testValues = GetParam();
     
     FillList(testValues.sorted);
     EXPECT_EQ(slist_sort(lst, testValues.comparator), API_RESULT_ON_SUCCESS);
@@ -55,17 +55,17 @@ TEST_P(Sort, SortTest) {
     ClearList();
 };
 
-INSTANTIATE_TEST_SUITE_P(SortFullSuite, Sort, ::testing::Values(
-    SortParam(&test_utils::ascending , {}                    , {}                    ),
-    SortParam(&test_utils::ascending , {111}                 , {111}                 ),
-    SortParam(&test_utils::ascending , {2, 1}                , {1, 2}                ),
-    SortParam(&test_utils::ascending , {9, 0, 2, 1, 6, 5}    , {0, 1, 2, 5, 6, 9}    ),
-    SortParam(&test_utils::ascending , {9, 0, 2, 1, 6, 5, 44}, {0, 1, 2, 5, 6, 9, 44}),
-    SortParam(&test_utils::descending, {}                    , {}                    ),
-    SortParam(&test_utils::descending, {111}                 , {111}                 ),
-    SortParam(&test_utils::descending, {1, 2}                , {2, 1}                ),
-    SortParam(&test_utils::descending, {9, 0, 2, 1, 6, 5}    , {9, 6, 5, 2, 1, 0}    ),
-    SortParam(&test_utils::descending, {9, 0, 2, 1, 6, 5, 44}, {44, 9, 6, 5, 2, 1, 0})
+INSTANTIATE_TEST_SUITE_P(SortFullSuite, SortFull, ::testing::Values(
+    SortFullParam(&test_utils::ascending , {}                    , {}                    ),
+    SortFullParam(&test_utils::ascending , {111}                 , {111}                 ),
+    SortFullParam(&test_utils::ascending , {2, 1}                , {1, 2}                ),
+    SortFullParam(&test_utils::ascending , {9, 0, 2, 1, 6, 5}    , {0, 1, 2, 5, 6, 9}    ),
+    SortFullParam(&test_utils::ascending , {9, 0, 2, 1, 6, 5, 44}, {0, 1, 2, 5, 6, 9, 44}),
+    SortFullParam(&test_utils::descending, {}                    , {}                    ),
+    SortFullParam(&test_utils::descending, {111}                 , {111}                 ),
+    SortFullParam(&test_utils::descending, {1, 2}                , {2, 1}                ),
+    SortFullParam(&test_utils::descending, {9, 0, 2, 1, 6, 5}    , {9, 6, 5, 2, 1, 0}    ),
+    SortFullParam(&test_utils::descending, {9, 0, 2, 1, 6, 5, 44}, {44, 9, 6, 5, 2, 1, 0})
 ));
 
 #endif
