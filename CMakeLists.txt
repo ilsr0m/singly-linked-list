@@ -40,9 +40,11 @@ add_executable(slist_test
     tests/slist_contains.cpp
     tests/slist_count.cpp
     tests/slist_find.cpp
+    tests/slist_filter.cpp
     tests/slist_sort.cpp
     tests/slist_bogosort.cpp
     tests/slist_front_item.cpp
+    tests/slist_back_item.cpp
     tests/slist_test.cpp
 )
 

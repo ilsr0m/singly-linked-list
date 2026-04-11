@@ -589,14 +589,14 @@ slist_t* slist_filter(const slist_t *lst, predicate_fn predicate, const void* co
 
 int slist_is_sorted(slist_t *lst, comparator_fn comparator) {
 	if(!lst || !comparator) return -1;
-	if(lst->list_size == 0) return -1;
+	if(lst->list_size < 2) return 1;
 	snode_t * current = lst->head;
 	while (current && current->next) {
 		if(comparator(current->item, current->next->item) > 0)
-			return -1;
+			return 0;
 		current = current->next;
 	}
-	return 0;
+	return 1;
 }
 
 struct MergeChain {
@@ -721,8 +721,10 @@ static void _list_shuffle(slist_t *lst) {
 int slist_bogosort(slist_t *lst, comparator_fn comparator){
 	if(!lst || !comparator) return -1;
 	if(lst->list_size > 1) { 
-		while(slist_is_sorted(lst, comparator) < 0) 
+		int status;
+		while((status = slist_is_sorted(lst, comparator)) == 0) 
 			_list_shuffle(lst);
+		if(status < 0) return -1;
 	}
 	return 0;
 }

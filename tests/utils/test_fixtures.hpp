@@ -193,6 +193,12 @@ using FindNull = ::testing::TestWithParam<std::tuple<slist_t*, std::optional<int
 using FindFull = ::testing::TestWithParam<std::tuple<std::vector<int>, int>>;
 
 // -------------------------------------------------
+// slist_filter
+// -------------------------------------------------
+using FilterNull = ::testing::TestWithParam<std::tuple<slist_t*, std::optional<int>, predicate_fn>>;
+using FilterFull = ::testing::TestWithParam<std::tuple<slist_t*, int, vec_t>>;
+
+// -------------------------------------------------
 // slist_sort
 // -------------------------------------------------
 using SortNull = ::testing::TestWithParam<std::tuple<slist_t *, comparator_fn>>;

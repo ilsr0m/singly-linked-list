@@ -344,8 +344,8 @@ void* slist_find(const slist_t *lst, const void *key, comparator_fn comparator);
 * Copies elements for which predicate returns non-zero value.
 *
 * @param[in] lst Pointer to source list.
-* @param[in] context Pointer to user-defined predicate context.
 * @param[in] predicate Predicate function with context.
+* @param[in] context Pointer to user-defined predicate context.
 *
 * @return Pointer to filtered list on success.
 * @return NULL on failure.

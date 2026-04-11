@@ -4,6 +4,7 @@
 TEST_P(SortNull, SortTest) {
     auto [lst, cmp] = GetParam();
     EXPECT_EQ(slist_sort(lst, cmp), tuti::onFailure);
+    EXPECT_EQ(slist_is_sorted(lst, cmp), tuti::onFailure);
     tuti::tearDown(lst);
 }
 
@@ -15,13 +16,14 @@ INSTANTIATE_TEST_SUITE_P(SortNullSuite, SortNull, ::testing::Values(
 
 TEST_P(SortFull, SortTest) {
     SortFullParam testValues = GetParam();
-    slist_t *lst = tuti::toSlist(testValues.sorted);
+    slist_t *lst = tuti::toSlist(testValues.disordered);
     EXPECT_EQ(slist_sort(lst, testValues.comparator), tuti::onSuccess);
     EXPECT_EQ(slist_size(lst), testValues.disordered.size());
     EXPECT_EQ(slist_size(lst), testValues.sorted.size());
 
     if(!slist_size(lst)) tuti::testEmpty(lst);
     else tuti::compareWith(lst, testValues.sorted);
+    EXPECT_EQ(slist_is_sorted(lst, testValues.comparator), 1);
     tuti::tearDown(lst);
 };
 

@@ -68,6 +68,8 @@ namespace test_utils {
     int ascending(const void* a, const void* b);
     // reversed comparator
     int descending(const void* a, const void* b);
+
+    int greater(const void* item, const void *context);
 }
 
 namespace tuti = test_utils;

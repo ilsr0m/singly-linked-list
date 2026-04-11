@@ -49,4 +49,10 @@ namespace test_utils {
         if(_a < _b) return 1;
         return 0;
     }
+
+    int greater(const void* item, const void *context) {
+        int _item = *static_cast<const int*>(item);
+        int _context = *static_cast<const int*>(context);
+        return (_item > _context);
+    }
 }
