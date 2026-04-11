@@ -202,3 +202,7 @@ using SortFull = ::testing::TestWithParam<SortFullParam>;
 // -------------------------------------------------
 // slist_bogosort
 // -------------------------------------------------
+using BogosortNull = SortNull;
+using BogosortFull = SortFull;
+
+
