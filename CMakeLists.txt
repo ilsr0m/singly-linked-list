@@ -18,7 +18,7 @@ target_include_directories(single_list
 # 3. GoogleTest
 # ------------------------------------------------------------------
 enable_testing() # CTest support
-find_package(GTest REQUIRED) # llok for gtest (and gtest_main)
+find_package(GTest REQUIRED) # look for gtest (and gtest_main)
 
 add_executable(slist_test
     tests/test_utils.cpp

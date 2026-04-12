@@ -8,9 +8,9 @@ TEST_P(ConcatNull, ConcatTest) {
 }
 
 INSTANTIATE_TEST_SUITE_P(ConcatNullSuite, ConcatNull, ::testing::Values (
-    std::make_tuple(nullptr, nullptr),
-    std::make_tuple(nullptr, tuti::toSlist(std::vector<int>{1, 2, 3})),
-    std::make_tuple(tuti::toSlist(std::vector<int>{1, 2, 3}), nullptr),
+    std::make_tuple(static_cast<slist_t*>(nullptr), static_cast<slist_t*>(nullptr)),
+    std::make_tuple(static_cast<slist_t*>(nullptr), tuti::toSlist(std::vector<int>{1, 2, 3})),
+    std::make_tuple(tuti::toSlist(std::vector<int>{1, 2, 3}), static_cast<slist_t*>(nullptr)),
     std::make_tuple(tuti::toSlist(std::vector<char>{1, 2, 3}), // item_sizes not same
         tuti::toSlist(std::vector<double>{1.1, 2.4, 0.1}))
 ));
