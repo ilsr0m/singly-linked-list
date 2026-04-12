@@ -14,9 +14,6 @@ target_include_directories(single_list
         ${CMAKE_CURRENT_SOURCE_DIR}/include   
 )
 
-# ------------------------------------------------------------------
-# 3. GoogleTest
-# ------------------------------------------------------------------
 enable_testing() # CTest support
 find_package(GTest REQUIRED) # look for gtest (and gtest_main)
 
@@ -62,8 +59,5 @@ target_link_libraries(slist_test
         GTest::gtest_main      
 )
 
-# ------------------------------------------------------------------
-# 6. Автоматическое обнаружение тестов
-# ------------------------------------------------------------------
 include(GoogleTest)               # модуль CMake, поставляемый вместе с CMake
 gtest_discover_tests(slist_test)  # добавляет тесты в CTest
