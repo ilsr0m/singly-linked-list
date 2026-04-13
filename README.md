@@ -1,14 +1,40 @@
-# Singly-linked list
-#### API of singly-linked list on C language
+# Singly Linked List (C)
 
-- How to build the project
-```shell
-rm build -Recurse
-cmake -S . -B build -G "Ninja"
-cmake --build build
-```
+A simple and lightweight implementation of a singly linked list in C.
 
-- How to start GTest
-``` shell
-ctest --test-dir build
-```
+The library provides a generic list container that stores elements of arbitrary type using void*.  
+It includes common list operations, searching, filtering, and sorting algorithms.
+
+---
+
+## Features
+
+- Generic container (void*-based)
+- Basic operations:
+  - create / delete
+  - append / prepend / insert
+  - remove / clear
+- Access:
+  - front / back / at
+- Algorithms:
+  - find / contains
+  - filter
+  - concat / splice
+  - sorting (including experimental bogosort 😄)
+- Fully tested with GoogleTest
+- Doxygen-ready documentation
+
+---
+
+## Requirements
+
+### Build tools
+- CMake (>= 3.10 recommended)
+- C compiler (C11 or newer)
+- C++ compiler with C++17 support (required for tests)
+
+### Compilers
+
+#### Windows
+- MSVC (UCRT toolset recommended)
+- Use `build.ps1`
