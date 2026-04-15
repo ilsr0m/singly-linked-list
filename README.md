@@ -47,23 +47,46 @@ It includes common list operations, searching, filtering, and sorting algorithms
 - Use build.sh
 
 ---
-## Repository Structure
+## Build scripts
+
+### Synopsis
+Helper scripts are provided for quick project configuration, building, cleaning, and test execution.
+
+Scripts are located in:
 
 ```text
-singly-linked-list/
-├── CMakeLists.txt 
-├── README.md
-├── LICENSE
-├── include/
-│   └── single_list.h
-├── src/ 
-│   └── single_list.c
-├── tests/ 
-│   └── ...
-├── scripts/ 
-│   ├── build.sh
-│   └── build.ps1
-└── docs/
+scripts/
+├── build.sh
+└── build.ps1
 ```
+
+Run scripts from the project root directory.
+
+### Bash Script (Linux)
+
+```bash
+./scripts/build.sh
+```
+
+Options
+
+| Option | Description |
+|--------|-------------|
+`-b`, `--build-type <type>` | Build type: Debug or Release
+`-j`, `--jobs <n>` | Parallel build jobs
+`-c`, `--clean` | Remove build directory before configure
+`-g`, `--generator <name>` | CMake generator
+`-r`, `--run` | Run test executable after successful build
+`-v`, `--valgrind` | Run executable with Valgrind (Debug only)
+
+Default Values
+
+|Default|Value|
+|--------|-------------|
+Build type | Release
+Generator  | MinGW Makefiles
+Jobs       | 2
+Build dir  | build-bash
+Executable | slist_test
 
 ---
