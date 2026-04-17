@@ -2,6 +2,7 @@
 /build-bash/
 /out/
 /bin/
+/docs/
 *.o
 *.obj
 *.exe

@@ -383,7 +383,7 @@ int slist_sort(slist_t *lst, comparator_fn comparator);
  * @return -1 on failure.
  * 
  * @warning Extremely inefficient algorithm.
- * Average time complexity is unbounded @f \f$ (O(n \cdot n!)) \f$.
+ * Average time complexity is unbounded \f$ (O(n \cdot n!)) \f$.
  * Intended for testing or educational purposes only.
  */
 int slist_bogosort(slist_t *lst, comparator_fn comparator);
