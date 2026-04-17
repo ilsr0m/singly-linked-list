@@ -148,10 +148,10 @@ int slist_set(slist_t *lst, const size_t index, const void* item);
 void* slist_at(const slist_t *lst, const size_t index);
 
 /**
-* @brief Removes first element equal to key from list.
+* @brief Removes the first element equal to key from list.
 *
 * Searches list using comparator and 
-* removes first matching element.
+* removes the first matching element.
 * 
 * @param[in,out] lst Pointer to list.
 * @param[in] key Pointer to key value.
@@ -190,9 +190,9 @@ int slist_remove_at(slist_t *lst, const size_t position);
 int slist_remove_all(slist_t *lst, const void* key, comparator_fn comparator); 
 
 /**
-* @brief Removes first element from list.
+* @brief Removes the first element from list.
 *
-* Removes first node and returns copy of removed item.
+* Removes the first node and returns copy of removed item.
 *
 * @param[in,out] lst Pointer to list.
 *
@@ -202,9 +202,9 @@ int slist_remove_all(slist_t *lst, const void* key, comparator_fn comparator);
 void* slist_pop_front(slist_t *lst);
 
 /**
-* @brief Removes last element from list.
+* @brief Removes the last element from list.
 *
-* Removes last node and returns copy of removed item.
+* Removes the last node and returns copy of removed item.
 *
 * @param[in,out] lst Pointer to list.
 *
@@ -214,7 +214,7 @@ void* slist_pop_front(slist_t *lst);
 void* slist_pop_back(slist_t *lst); 
 
 /**
-* @brief Removes first @p n elements from list.
+* @brief Removes the first @p n elements from list.
 *
 * @param[in,out] lst Pointer to list.
 * @param[in] n Number of elements to remove.
@@ -226,7 +226,7 @@ void* slist_pop_back(slist_t *lst);
 int slist_trim_front(slist_t *lst, const size_t n); 
 
 /**
-* @brief Removes last @p n elements from list.
+* @brief Removes the last @p n elements from list.
 *
 * @param[in,out] lst Pointer to list.
 * @param[in] n Number of elements to remove.
@@ -389,7 +389,7 @@ int slist_sort(slist_t *lst, comparator_fn comparator);
 int slist_bogosort(slist_t *lst, comparator_fn comparator);
 
 /**
- * @brief Returns pointer to first node.
+ * @brief Returns pointer to the first node.
  * 
  * @param[in] lst Pointer to list.
  * 
@@ -399,7 +399,7 @@ int slist_bogosort(slist_t *lst, comparator_fn comparator);
 snode_t* slist_head(const slist_t *lst);
 
 /**
- * @brief Returns pointer to last node.
+ * @brief Returns pointer to the last node.
  * 
  * @param[in] lst Pointer to list.
  * 
@@ -414,7 +414,7 @@ snode_t* slist_tail(const slist_t *lst);
  * @param[in] nod Pointer to node.
  * 
  * @return Pointer to next node.
- * @return NULL if @p nod is NULL or last node.
+ * @return NULL if @p nod is NULL or the last node.
  */
 snode_t *snode_next(const snode_t *nod);
 
@@ -449,21 +449,21 @@ size_t slist_size(const slist_t *lst);
 size_t slist_item_size(const slist_t *lst);
 
 /**
- * @brief Returns first element in list.
+ * @brief Returns the first element in list.
  * 
  * @param[in] lst Pointer to list.
  * 
- * @return Pointer to first element.
+ * @return Pointer to the first element.
  * @return NULL if list is NULL or empty.
  */
 void* slist_front_item(const slist_t *lst);
 
 /**
- * @brief Returns last element in list.
+ * @brief Returns the last element in list.
  * 
  * @param[in] lst Pointer to list.
  * 
- * @return Pointer to last element.
+ * @return Pointer to the last element.
  * @return NULL if list is NULL or empty.
  */
 void* slist_back_item(const slist_t *lst);
