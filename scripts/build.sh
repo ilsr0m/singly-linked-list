@@ -8,6 +8,7 @@ JOBS=2
 CLEAN=false
 RUN=false
 VALGRIND=false
+TESTS=false
 
 # Color for printed text
 MAGENTA="\033[35m"
@@ -40,6 +41,9 @@ while [[ $# -gt 0 ]]; do
 		-v|--valgrind)
 			VALGRIND=true
 			shift
+			;;
+		-t|--tests)
+			TESTS=true
 			;;
 		*)
 			echo -e "${RED}Unknown option: $1 ${RESET}"
@@ -79,7 +83,7 @@ if [ $? -ne 0 ]; then
 fi
 echo -e "${GREEN}Build completed successfully.${RESET}"
 
-if [ "$RUN" = true ]; then
+if [[ "$RUN" = true && "$TESTS" = true]]; then
 	EXE_PATH=$(pwd)/"$BUILD_DIRECTORY"/"$EXE_TEST"
 	if [ -f "$EXE_PATH" ]; then
 		if [ "$VALGRIND" = true ]; then
@@ -92,6 +96,9 @@ if [ "$RUN" = true ]; then
 		exit 0
  	fi
  	echo -e "${RED}Executable not found: ${EXE_PATH}.${RESET}"
- 	exit 
+ 	exit 1
+elif ["$RUN" = true]; then
+	echo -e "${RED}Tests are not built to be run.${RESET}"
+	exit 1
 fi
-
+exit 0
