@@ -77,7 +77,7 @@ void slist_delete(slist_t **lst);
 /**
  * @brief Checks if list is empty.
  * 
- * @param [in] lst Pointer to list.
+ * @param[in] lst Pointer to list.
  * 
  * @return 1 if list is empty.
  * @return 0 otherwise.
@@ -127,9 +127,9 @@ int slist_insert(slist_t *lst, const void *item, const size_t position);
  * 
  * Replaces element at specified position with new value.
  * 
- * @param lst Pointer to list.
- * @param index Zero-based index.
- * @param item Pointer to new value.
+ * @param[in,out] lst Pointer to list.
+ * @param[in] index Zero-based index.
+ * @param[in] item Pointer to new value.
  * 
  * @return 0 on success.
  * @return -1 on failure.
