@@ -297,7 +297,7 @@ int slist_splice(slist_t *lst_destination, slist_t *lst_source);
 *
 * Searches list using comparator.
 *
-* @param[in] list Pointer to list.
+* @param[in] lst Pointer to list.
 * @param[in] key Pointer to key value.
 * @param[in] comparator Comparator function.
 *
@@ -312,7 +312,7 @@ int slist_contains(const slist_t *lst, const void *key, comparator_fn comparator
 *
 * Searches list using comparator and counts matching elements.
 *
-* @param[in] list Pointer to list.
+* @param[in] lst Pointer to list.
 * @param[in] key Pointer to key value.
 * @param[in] comparator Comparator function.
 *
@@ -421,10 +421,10 @@ snode_t *snode_next(const snode_t *nod);
 /**
  * @brief Returns pointer to node data.
  * 
- * @param[in] nod Pointer to node
+ * @param[in] nod Pointer to node.
  * 
  * @return Pointer to stored data.
- * @return NULL if @p nod is NULL
+ * @return NULL if @p nod is NULL.
  */
 void* snode_data(const snode_t *nod);
 
