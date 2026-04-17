@@ -32,7 +32,7 @@ typedef  int (*comparator_fn)(const void *item, const void *key);
 /**
 * @brief Predicate function with context.
 *
-* Evaulates condition for element using user-defined context.
+* Evaluates condition for element using user-defined context.
 *
 * @param[in] item Pointer to element.
 * @param[in] context Pointer to user-defined context.
@@ -75,7 +75,7 @@ void slist_clear(slist_t *lst);
 void slist_delete(slist_t **lst);
 
 /**
- * @brief Checks if list is empty
+ * @brief Checks if list is empty.
  * 
  * @param [in] lst Pointer to list.
  * 
@@ -270,8 +270,8 @@ slist_t *slist_copy(const slist_t *lst);
  * Copies all elements from source list and 
  * appends them in destination list.
  * 
- * @param [in,out] lst_destination Pointer to destination list.
- * @param [in] lst_source Pointer to source list.
+ * @param[in,out] lst_destination Pointer to destination list.
+ * @param[in] lst_source Pointer to source list.
  * 
  * @return 0 on success.
  * @return -1 on failure.
@@ -284,8 +284,8 @@ int slist_concat(slist_t *lst_destination, const slist_t *lst_source);
  * Transfers all nodes from source list to end of destination list.
  * Source list becomes empty after call.
  * 
- * @param [in,out] lst_destination Pointer to destination list.
- * @param [in,out] lst_source Pointer to source list.
+ * @param[in,out] lst_destination Pointer to destination list.
+ * @param[in,out] lst_source Pointer to source list.
  * 
  * @return 0 on success.
  * @return -1 on failure.
@@ -325,11 +325,11 @@ int slist_count(const slist_t *lst, const void *key, comparator_fn comparator);
  * @brief Finds element equal to key.
  * 
  * Searches list using comparator and 
- * return first matching element.
+ * returns the first matching element.
  * 
- * @param lst Pointer to list.
- * @param key Pointer to key value.
- * @param comparator Comparator function.
+ * @param[in] lst Pointer to list.
+ * @param[in] key Pointer to key value.
+ * @param[in] comparator Comparator function.
  * 
  * @return Pointer to found element.
  * @return NULL if not found or on failure.
@@ -382,7 +382,7 @@ int slist_sort(slist_t *lst, comparator_fn comparator);
  * @return 0 on success.
  * @return -1 on failure.
  * 
- * @warning Extremely inefficient algotithm.
+ * @warning Extremely inefficient algorithm.
  * Average time complexity is unbounded (0(n!)).
  * Intended for testing or educational purposes only.
  */
