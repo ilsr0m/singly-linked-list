@@ -3,6 +3,7 @@ param(
     [string]$Config = "Debug",  # param $Config is Debug by default
     [int]$Jobs = 2,
     [string]$Generator = "MinGW Makefiles",
+    [switch]$BuildTests,
     [switch]$Clean,
     [switch]$Run
 )
@@ -18,10 +19,14 @@ if ($Clean -and (Test-Path $BuildDir)) {
 }
 
 Write-Host "Configuring project..." -ForegroundColor Magenta
-cmake -S . -B $BuildDir -G $Generator 
-"-DCMAKE_BUILD_TYPE=$Config"
-# -DCMAKE_C_COMPILER=gcc 
-# -DCMAKE_CXX_COMPILER=g++
+if($BuildTests){
+    cmake -S . -B $BuildDir -G $Generator -DBUILD_TESTS=ON
+    "-DCMAKE_BUILD_TYPE=$Config"
+}
+else {
+    cmake -S . -B $BuildDir -G $Generator -DBUILD_TESTS=OFF
+    "-DCMAKE_BUILD_TYPE=$Config"
+}
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "CMake configure failed." -ForegroundColor Red
@@ -37,7 +42,7 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host "Build completed successfully." -ForegroundColor Green
 
-if ($Run) {
+if ($BuildTests -and $Run) {
     $ExePath = Join-Path $BuildDir $ExeTest
     if (Test-Path $ExePath) {
         Write-Host "Running $ExePath..." -ForegroundColor Magenta
@@ -46,4 +51,11 @@ if ($Run) {
     }
     Write-Host "Executable not found: $ExePath." -ForegroundColor Red
     exit 1
+    
 }
+elseif($Run) {
+    Write-Host "Tests are not built to be run." -ForegroundColor Red
+    exit 1
+}
+exit 0
+
