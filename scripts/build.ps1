@@ -11,6 +11,11 @@ param(
 $BuildDir = "build"
 $ExeTest  = "slist_test.exe"
 
+if (!$BuildTests -and $Run){
+    Write-Host "Run is supported only with option -BuildTests included." -ForegroundColor Red
+    exit 1
+}
+
 Write-Host "Configuration: $Config" -ForegroundColor Magenta
 
 if ($Clean -and (Test-Path $BuildDir)) {
@@ -20,12 +25,10 @@ if ($Clean -and (Test-Path $BuildDir)) {
 
 Write-Host "Configuring project..." -ForegroundColor Magenta
 if($BuildTests){
-    cmake -S . -B $BuildDir -G $Generator -DBUILD_TESTS=ON
-    "-DCMAKE_BUILD_TYPE=$Config"
+    cmake -S . -B $BuildDir -G $Generator -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE="$Config"
 }
 else {
-    cmake -S . -B $BuildDir -G $Generator -DBUILD_TESTS=OFF
-    "-DCMAKE_BUILD_TYPE=$Config"
+    cmake -S . -B $BuildDir -G $Generator -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE="$Config"
 }
 
 if ($LASTEXITCODE -ne 0) {
@@ -52,10 +55,6 @@ if ($BuildTests -and $Run) {
     Write-Host "Executable not found: $ExePath." -ForegroundColor Red
     exit 1
     
-}
-elseif($Run) {
-    Write-Host "Tests are not built to be run." -ForegroundColor Red
-    exit 1
 }
 exit 0
 

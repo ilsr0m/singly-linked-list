@@ -71,7 +71,7 @@ fi
 
 # if RUN without TESTS; then exit 1
 if [[ "$RUN" = true && "$TESTS" = false ]]; then
-	echo -e "${RED}Run option is supported only for builds with --tests included.${RESET}"
+	echo -e "${RED}Run is supported only for builds with --tests included.${RESET}"
 	exit 1
 fi
 
