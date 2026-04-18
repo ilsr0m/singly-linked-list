@@ -2,7 +2,7 @@
 
 set -e
 
-BUILD_TYPE="Release"
+BUILD_TYPE="Debug"
 GENERATOR="MinGW Makefiles"
 JOBS=2
 CLEAN=false
@@ -16,7 +16,7 @@ RED="\033[31m"
 GREEN="\033[32m"
 RESET="\033[0m"
 
-while [[ $# -gt 0 ]]; do
+while [ $# -gt 0 ]; do
 	case $1 in
 		-b|--build-type)
 			BUILD_TYPE="$2"
@@ -44,6 +44,7 @@ while [[ $# -gt 0 ]]; do
 			;;
 		-t|--tests)
 			TESTS=true
+			shift
 			;;
 		*)
 			echo -e "${RED}Unknown option: $1 ${RESET}"
@@ -58,7 +59,19 @@ EXE_TEST="slist_test"
 
 # Return error if try valgrind with non-debug option
 if [[ "$BUILD_TYPE" != "Debug" && "$VALGRIND" = true ]]; then
-	echo -e "${RED}Valgrind is supported only for Debug builds.${RESET}"
+	echo -e "${RED}Valgrind is supported only for Debug builds with --run option included.${RESET}"
+	exit 1
+fi
+
+# Retuen error if valgrind without run option
+if [[ "$VALGRIND" = true && "$RUN" = false ]]; then
+	echo -e "${RED}Valgrind is supported only for Debug builds with --run option included.${RESET}"
+	exit 1
+fi
+
+# if RUN without TESTS; then exit 1
+if [[ "$RUN" = true && "$TESTS" = false ]]; then
+	echo -e "${RED}Run option is supported only for builds with --tests included.${RESET}"
 	exit 1
 fi
 
@@ -68,7 +81,14 @@ if [ "$CLEAN" = true ]; then
 fi
 
 echo -e "${MAGENTA}Configuring project...${RESET}"
-cmake -S . -B $BUILD_DIRECTORY -G $GENERATOR -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
+
+if [ "$TESTS" = true ]; then
+	cmake -S . -B $BUILD_DIRECTORY -G $GENERATOR -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
+else
+	cmake -S . -B $BUILD_DIRECTORY -G $GENERATOR -DBUILD_TESTS=OFF -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
+fi
+
+#cmake -S . -B $BUILD_DIRECTORY -G $GENERATOR -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
 
 if [ $? -ne 0 ]; then
 	echo -e "${RED}CMake configure failed.${RESET}"
@@ -83,7 +103,7 @@ if [ $? -ne 0 ]; then
 fi
 echo -e "${GREEN}Build completed successfully.${RESET}"
 
-if [[ "$RUN" = true && "$TESTS" = true]]; then
+if [ "$RUN" = true ]; then
 	EXE_PATH=$(pwd)/"$BUILD_DIRECTORY"/"$EXE_TEST"
 	if [ -f "$EXE_PATH" ]; then
 		if [ "$VALGRIND" = true ]; then
@@ -97,8 +117,5 @@ if [[ "$RUN" = true && "$TESTS" = true]]; then
  	fi
  	echo -e "${RED}Executable not found: ${EXE_PATH}.${RESET}"
  	exit 1
-elif ["$RUN" = true]; then
-	echo -e "${RED}Tests are not built to be run.${RESET}"
-	exit 1
 fi
-exit 0
+
