@@ -3,7 +3,7 @@
 set -e
 
 BUILD_TYPE="Debug"
-GENERATOR="MinGW Makefiles"
+GENERATOR="Ninja"
 JOBS=2
 CLEAN=false
 RUN=false
