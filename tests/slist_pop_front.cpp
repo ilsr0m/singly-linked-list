@@ -3,7 +3,7 @@
 
 TEST_P(PopFrontNull, PopFrontTest) {
     slist_t* slst = GetParam();
-    EXPECT_EQ(slist_pop_front(slst), nullptr);
+    EXPECT_EQ(slist_pop_front(slst), tuti::onFailure);
     tuti::tearDown(slst);
 }
 
@@ -15,8 +15,9 @@ INSTANTIATE_TEST_SUITE_P(PopFrontNullSuite, PopFrontNull, ::testing::Values (
 TEST_P(PopFrontFull, PopFrontTest) {
     PopFrontFullParam pop = GetParam();
     slist_t *lst = tuti::toSlist(pop.base);
-    for(unsigned i = 0; i < pop.count; i++)
-        EXPECT_EQ(*(int*)slist_pop_front(lst), pop.popped[i]);
+    for(unsigned i = 0; i < pop.count; i++) {
+        EXPECT_EQ(slist_pop_front(lst), tuti::onSuccess);
+    }
     tuti::compareWith(lst, pop.target);
     tuti::tearDown(lst);
 }
