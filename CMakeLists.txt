@@ -7,7 +7,7 @@ if(BUILD_TESTS)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
 else()
-    project(single_list VERSION 0.1.0 LANGUAGES C)
+    project(single_list VERSION 1.0.0 LANGUAGES C)
 endif()
 
 set(CMAKE_C_STANDARD   11)
